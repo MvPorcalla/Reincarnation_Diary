@@ -1,0 +1,75 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reincarnation RPG</title>
+  <link rel="stylesheet" href="./css/uiStyle.css">
+
+  <style>
+    #enemy-image {
+  display: block;
+  max-width: 150px;
+  margin: 10px auto 0 auto;
+}
+
+  </style>
+</head>
+<body>
+  <div id="game-wrapper">
+    <div id="content-container">
+
+      <!-- Player Stats Panel -->
+      <aside id="stats-panel">
+        <div id="player-profile">
+          <img src="./assets/sampleasset.png" alt="Player Avatar" id="player-avatar">
+          <div id="player-info">
+            <div id="player-name">Hero</div>
+            <div class="stat-bar">
+              <label>Health:</label>
+              <div id="player-health" class="bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Stats</h2>
+        <div class="stat"><strong>STR:</strong> <span id="stat-str"></span></div>
+        <div class="stat"><strong>INT:</strong> <span id="stat-int"></span></div>
+        <div class="stat"><strong>CHR:</strong> <span id="stat-chr"></span></div>
+        <div class="stat"><strong>END:</strong> <span id="stat-end"></span></div>
+        <div class="stat"><strong>WIS:</strong> <span id="stat-wis"></span></div>
+        <div class="stat soul-power"><strong>Soul Power:</strong> <span id="soul-power">50 (Neutral)</span></div>
+
+        <div id="inventory">
+          <div id="equipped-items" class="inventory-grid equipped-grid"></div>
+          <div id="general-inventory" class="inventory-grid general-grid"></div>
+        </div>
+      </aside>
+      
+
+      <!-- Main Story and Combat UI -->
+      <main id="main-ui">
+        <div id="enemy-info" hidden>
+          <h3 id="enemy-name"></h3>
+          <div class="stat-bar">
+            <label>Health:</label>
+            <div id="enemy-health" class="bar"></div>
+          </div>
+          <img id="enemy-image" src="" alt="Enemy Image" class="enemy-image">
+        </div>
+
+
+        <div id="story-text" class="monospace"></div>
+        <div id="choices-container"></div>
+        <button id="end-btn" hidden>End Game</button>
+      </main>
+
+
+    </div>
+  </div>
+
+  <!-- Modular Scripts -->
+  <script type="module" src="./gamemain.js"></script>
+</body>
+</html>
