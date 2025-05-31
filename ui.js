@@ -17,6 +17,7 @@ export class UI {
     // Player stat elements
     this.statElements = {
       str: document.getElementById('stat-str'),
+      agi: document.getElementById('stat-agi'),
       int: document.getElementById('stat-int'),
       chr: document.getElementById('stat-chr'),
       end: document.getElementById('stat-end'),
@@ -38,6 +39,7 @@ export class UI {
 
     // Update player stats
     this.statElements.str.textContent = this.player.str;
+    this.statElements.agi.textContent = this.player.agi;
     this.statElements.int.textContent = this.player.int;
     this.statElements.chr.textContent = this.player.chr;
     this.statElements.end.textContent = this.player.end;
@@ -82,10 +84,11 @@ export class UI {
     this.choicesContainer.appendChild(btn);
   }
 
-  logCombat(text) {
-    this.combatLog += text + '\n';
+  logCombat(message) {
+    this.combatLog += message + '\n';
     this.storyTextEl.textContent = this.combatLog;
   }
+
 
   endCombat(message) {
     this.enemy = null;

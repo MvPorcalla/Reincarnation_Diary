@@ -47,7 +47,7 @@ export const enemyTiers = {
   2: [
     new Enemy({ 
       name: "Orc", 
-      maxHealth: 50, 
+      maxHealth: 1050, 
       damage: 10, 
       critChance: 0.15, 
       tier: 2,

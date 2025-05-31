@@ -5,6 +5,7 @@ export class Player {
     this.health = this.maxHealth;
 
     this.str = this.getRandomInt(5, 15);
+    this.agi = this.getRandomInt(5, 15); // Add agility
     this.int = this.getRandomInt(5, 15);
     this.chr = this.getRandomInt(5, 15);
     this.end = this.getRandomInt(5, 15);
@@ -37,11 +38,14 @@ export class Player {
   }
 
   takeDamage(amount) {
-    const dodged = Math.random() < this.dodgeChance;
-    if (dodged) return false; // dodged the attack
+    const dodgeChance = this.agi ? this.agi / 100 : this.dodgeChance; // Use AGI if available
+    const dodged = Math.random() < dodgeChance;
 
-    this.health = Math.max(this.health - amount, 0);
-    return true; // took damage
+    if (!dodged) {
+      this.health = Math.max(this.health - amount, 0);
+    }
+
+    return dodged; // Return whether it was dodged
   }
 
   isAlive() {

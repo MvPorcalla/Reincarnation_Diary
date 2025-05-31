@@ -10,6 +10,7 @@ let currentEnemy = null;
 let combat = null;
 
 const ui = new UI(player, null);
+const continueBtn = document.getElementById('continue-btn');
 
 // Define the assignRandomEnemy function here or import it if in another file
 function assignRandomEnemy() {
@@ -65,14 +66,35 @@ function renderScene() {
   ui.updateStats();
 }
 
-window.addEventListener('combatEnded', () => {
+// window.addEventListener('combatEnded', () => {
+//   ui.enemy = null;         
+//   ui.combatLog = '';       
+//   story.setScene('start', player);  // pass player here too
+//   renderScene();
+//   ui.updateStats();
+// });
+
+window.addEventListener('combatEnded', (e) => {
   ui.enemy = null;         
   ui.combatLog = '';       
-  story.setScene('start', player);  // pass player here too
-  renderScene();
-  ui.updateStats();
-});
 
+  // Show the continue button when combat ends
+  continueBtn.hidden = false;
+
+  // Disable combat buttons if any
+  ui.clearChoices();
+
+  // Assign a handler to continue button to move to the next scene or start
+  continueBtn.onclick = () => {
+    continueBtn.hidden = true;
+    // Go back to a safe scene or whatever you want after combat
+    story.setScene('start', player);
+    renderScene();
+    ui.updateStats();
+  };
+
+  // Optionally update UI to show player status etc.
+});
 
 
 // Start game at 'start' scene only
