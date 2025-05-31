@@ -97,6 +97,7 @@ body {
 .bar {
   height: 16px;
   width: 100px;
+  color:#eee;
   background-color: red;
   border: 1px solid #000;
   transition: width 0.3s ease;

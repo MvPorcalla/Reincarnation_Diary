@@ -21,7 +21,9 @@ export class UI {
       chr: document.getElementById('stat-chr'),
       end: document.getElementById('stat-end'),
       wis: document.getElementById('stat-wis'),
-      soulPower: document.getElementById('soul-power')
+      soulPower: document.getElementById('soul-power'),
+
+      basedamage: document.getElementById('base-damage') // Make sure this line exists
     };
 
     this.combatLogEntries = [];
@@ -41,6 +43,8 @@ export class UI {
     this.statElements.end.textContent = this.player.end;
     this.statElements.wis.textContent = this.player.wis;
     this.statElements.soulPower.textContent = `${this.player.soulPower} (Neutral)`; // You can change "(Neutral)" dynamically if needed
+    this.statElements.basedamage.textContent = this.player.baseDamage;
+
 
     // Update enemy info
     if (this.enemy) {
