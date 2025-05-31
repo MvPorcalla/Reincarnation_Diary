@@ -10,7 +10,7 @@ export class Player {
     this.wis = this.getRandomInt(5, 15);
 
     this.soulPower = 50;   // Fixed at 50
-    
+
     this.baseDamage = this.getRandomInt(8, 15);
     this.critChance = Math.random() * 0.15;
   }
