@@ -14,10 +14,9 @@
       max-width: 150px;
       margin: 10px auto 0 auto;
     }
-    /* #enemy-info {
-      text-align: center;
-      margin-bottom: 20px;
-    } */
+    .check {
+      background-color: green;
+    }
 
   </style>
 </head>
@@ -33,14 +32,16 @@
             <div id="player-name">Hero</div>
             <div class="stat-bar">
               <label>Health:</label>
-              <div id="player-health" class="bar"></div>
+              <div id="player-health" class="bar">
+                <div class="bar-fill"></div>
+              </div>
             </div>
           </div>
         </div>
 
         <h2>Stats</h2>
-        <div class="stat"><strong>STR:</strong> <span id="stat-str"></span></div>
-        <div class="stat"><strong>AGI:</strong> <span id="stat-agi"></span></div>
+        <div class="stat check"><strong>STR:</strong> <span id="stat-str"></span></div>
+        <div class="stat check"><strong>AGI:</strong> <span id="stat-agi"></span></div>
         <div class="stat"><strong>INT:</strong> <span id="stat-int"></span></div>
         <div class="stat"><strong>CHR:</strong> <span id="stat-chr"></span></div>
         <div class="stat"><strong>END:</strong> <span id="stat-end"></span></div>
@@ -54,7 +55,6 @@
         </div>
         
       </aside>
-      
 
       <!-- Main Story and Combat UI -->
       <main id="main-ui">
@@ -62,7 +62,9 @@
           <h3 id="enemy-name"></h3>
           <div class="stat-bar">
             <label>Health:</label>
-            <div id="enemy-health" class="bar"></div>
+            <div id="enemy-health" class="bar">
+              <div class="bar-fill"></div>
+            </div>
           </div>
           <img id="enemy-image" src="" alt="Enemy Image" class="enemy-image">
         </div>

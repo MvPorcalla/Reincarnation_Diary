@@ -25,8 +25,8 @@ export class Enemy {
   }
 }
 
-// Factory helper for ease of adding enemies
-function createEnemy(params) {
+// Factory function to create a new Enemy instance with given parameters
+export function createEnemy(params) {
   return new Enemy(params);
 }
 

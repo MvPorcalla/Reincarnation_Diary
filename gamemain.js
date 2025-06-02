@@ -1,8 +1,20 @@
 // gamemain.js
 import { Player } from './player.js';
+import { createEnemy } from './enemy.js';
 import { Combat } from './combat.js';
 import { UI } from './ui.js';
 import { story } from './story.js';
+import { validateStory } from './debugger.js';
+
+// ============================= Debbugging and Validation =============================
+// Validate the story structure before starting the game
+const isDev = true; // Set to false before deploying
+
+if (isDev) {
+  validateStory(story);
+}
+// ============================= Debbugging and Validation =============================
+
 
 let player = new Player("Hero");
 let currentEnemy = null;
@@ -10,8 +22,16 @@ let combat = null;
 
 const ui = new UI(player, null);
 
-function goToScene(sceneName) {
+function goToScene(sceneName, params = {}) {
   story.setScene(sceneName, player);
+
+  const scene = story.getScene(sceneName);
+
+  // Trigger onEnter if exists
+  if (scene.onEnter) {
+    scene.onEnter(player, params);
+  }
+
   renderScene();
 }
 
@@ -24,8 +44,16 @@ function renderScene() {
 
   // Combat scene
   if (scene.encounter) {
-    // Clone the enemy so the original template isn't mutated
-    currentEnemy = Object.assign(Object.create(Object.getPrototypeOf(scene.encounter)), scene.encounter);
+    // Clone enemy by creating a new Enemy instance using the original enemy's properties
+      // currentEnemy = Object.assign(Object.create(Object.getPrototypeOf(scene.encounter)), scene.encounter);
+    currentEnemy = createEnemy({
+      name: scene.encounter.name,
+      maxHealth: scene.encounter.maxHealth,
+      damage: scene.encounter.damage,
+      critChance: scene.encounter.critChance,
+      tier: scene.encounter.tier,
+      imageSrc: scene.encounter.imageSrc
+    });
 
     combat = new Combat(player, currentEnemy, ui);
     ui.enemy = currentEnemy;
