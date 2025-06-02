@@ -1,4 +1,4 @@
-// gamemain.js
+// gameManager.js
 import { Player } from './player.js';
 import { createEnemy } from './enemy.js';
 import { Combat } from './combat.js';
@@ -52,6 +52,7 @@ function renderScene() {
       damage: scene.encounter.damage,
       critChance: scene.encounter.critChance,
       tier: scene.encounter.tier,
+      agi: scene.encounter.agi,
       imageSrc: scene.encounter.imageSrc
     });
 

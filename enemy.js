@@ -1,13 +1,17 @@
 // enemy.js
 export class Enemy {
-  constructor({ name, maxHealth, damage, critChance, tier, imageSrc }) {
+  constructor({ name, maxHealth, damage, critChance, tier, agi = 0, imageSrc }) {
     this.name = name;
     this.maxHealth = maxHealth;
     this.health = maxHealth;
     this.damage = damage;
     this.critChance = critChance;
     this.tier = tier;
+    this.agi = agi;  // Set agility here
     this.imageSrc = imageSrc;
+
+    // Add a callback function or event emitter for logging combat, or remove if not needed here
+    this.onCombatLog = null; 
   }
 
   attack() {
@@ -16,8 +20,19 @@ export class Enemy {
     return { damage: dmg, isCrit };
   }
 
+  get dodgeChance() {
+    // 2% dodge chance per agi point, max 30%
+    return Math.min(this.agi * 0.02, 0.3);
+  }
+
   takeDamage(amount) {
+    if (Math.random() < this.dodgeChance) {
+      // Use a callback or event to log combat messages instead of this.ui
+      if (this.onCombatLog) this.onCombatLog(`${this.name} dodged the attack!`);
+      return true; // attack dodged, no damage taken
+    }
     this.health = Math.max(this.health - amount, 0);
+    return false; // damage taken
   }
 
   isAlive() {
@@ -38,6 +53,7 @@ export const enemyTiers = {
       damage: 9,
       critChance: 0.1,
       tier: 1,
+      agi: 8,  // Add agility here
       imageSrc: './assets/enemies/goblin-girl.png'
     }),
     createEnemy({
@@ -46,6 +62,7 @@ export const enemyTiers = {
       damage: 5,
       critChance: 0.05,
       tier: 1,
+      agi: 5,
       imageSrc: './assets/enemies/slime-girl.png'
     }),
     createEnemy({
@@ -54,6 +71,7 @@ export const enemyTiers = {
       damage: 6,
       critChance: 0.05,
       tier: 1,
+      agi: 10,
       imageSrc: './assets/enemies/sampleasset.png'
     }),
   ],
@@ -64,6 +82,7 @@ export const enemyTiers = {
       damage: 20,
       critChance: 0.15,
       tier: 2,
+      agi: 7,
       imageSrc: './assets/enemies/orc-girl.png'
     }),
     createEnemy({
@@ -72,7 +91,9 @@ export const enemyTiers = {
       damage: 20,
       critChance: 0.12,
       tier: 2,
+      agi: 6,
       imageSrc: './assets/enemies/sampleasset.png'
     }),
   ],
 };
+

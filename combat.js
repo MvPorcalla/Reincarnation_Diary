@@ -9,11 +9,13 @@ export class Combat {
 
   // New method to determine who goes first based on speed + randomness
   determineTurnOrder() {
-    const playerSpeed = Number(this.player.speed) || 0;
-    const enemySpeed = Number(this.enemy.speed) || 0;
+    // Use player's agility
+    const playerAgility = Number(this.player.agi) || 0;
+    // Use enemy agility or fallback to 0 if not defined
+    const enemyAgility = Number(this.enemy.agi) || 0;
 
-    const playerInitiative = playerSpeed + Math.floor(Math.random() * 20) + 1;
-    const enemyInitiative = enemySpeed + Math.floor(Math.random() * 20) + 1;
+    const playerInitiative = playerAgility + Math.floor(Math.random() * 20) + 1;
+    const enemyInitiative = enemyAgility + Math.floor(Math.random() * 20) + 1;
 
     this.ui.logCombat(`Player initiative roll: ${playerInitiative}`);
     this.ui.logCombat(`Enemy initiative roll: ${enemyInitiative}`);
@@ -23,6 +25,7 @@ export class Combat {
 
     return Math.random() < 0.5 ? 'player' : 'enemy';
   }
+
 
 
 playerAttack() {
