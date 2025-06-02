@@ -38,15 +38,17 @@ export class Player {
   }
 
   takeDamage(amount) {
-    const dodgeChance = this.agi ? this.agi / 100 : this.dodgeChance; // Use AGI if available
+    const dodgeChance = Math.min(this.agi * 0.03, 0.4); // AGI scaling with cap
     const dodged = Math.random() < dodgeChance;
 
     if (!dodged) {
       this.health = Math.max(this.health - amount, 0);
     }
 
-    return dodged; // Return whether it was dodged
+    return dodged;
   }
+
+
 
   isAlive() {
     return this.health > 0;

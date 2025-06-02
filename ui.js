@@ -32,6 +32,13 @@ export class UI {
     this.combatLog = '';
   }
 
+  flashEffect(el, className) {
+    el.classList.add(className);
+    setTimeout(() => {
+      el.classList.remove(className);
+    }, 300);
+  }
+  
   updateStats() {
     // Update player health
     const healthPercent = (this.player.health / this.player.maxHealth) * 100;

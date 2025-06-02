@@ -101,7 +101,6 @@ body {
   color: #4caf50;             /* lighter green for the fill via .bar-fill */
 }
 
-
 #enemy-health {
   background-color: #330000;
   border-color: #990000;
@@ -121,9 +120,6 @@ body {
   transition: width 0.3s ease;
   border-radius: 2px;
 }
-
-
-
 .bar.sanity {
   background-color: blue;
 }
@@ -209,6 +205,24 @@ body {
   border-color: #f1c40f;
   outline: none;
 }
+
+
+/* Highlight when a dodge occurs */
+#player-health.flash-crit, #enemy-health.flash-crit {
+  background-color: rgba(255, 0, 0, 0.5) !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Highlight when a critical hit occurs */
+#player-health.flash-dodge, #enemy-health.flash-dodge {
+  background-color: rgba(0, 200, 255, 0.5) !important; 
+  transition: background-color 0.3s ease;
+}
+
+
+
+
+
 
 
 /* Responsive Layout */
