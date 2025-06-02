@@ -8,6 +8,8 @@ export class UI {
     this.storyTextEl = document.getElementById('story-text');
     this.choicesContainer = document.getElementById('choices-container');
 
+    this.playerNameEl = document.getElementById('player-name');
+
     this.enemyInfoEl = document.getElementById('enemy-info');
     this.enemyNameEl = document.getElementById('enemy-name');
     this.enemyHealthBar = document.getElementById('enemy-health');
@@ -39,36 +41,39 @@ export class UI {
     }, 300);
   }
   
-  updateStats() {
-    // Update player health
-    const healthPercent = (this.player.health / this.player.maxHealth) * 100;
-    this.playerHealthBar.style.width = healthPercent + '%';
-    this.playerHealthBar.textContent = `${this.player.health} / ${this.player.maxHealth}`;
+updateStats() {
+  // Update player name
+  this.playerNameEl.textContent = this.player.name;
 
-    // Update player stats
-    this.statElements.str.textContent = this.player.str;
-    this.statElements.agi.textContent = this.player.agi;
-    this.statElements.int.textContent = this.player.int;
-    this.statElements.chr.textContent = this.player.chr;
-    this.statElements.end.textContent = this.player.end;
-    this.statElements.wis.textContent = this.player.wis;
-    this.statElements.soulPower.textContent = `${this.player.soulPower} (Neutral)`; // You can change "(Neutral)" dynamically if needed
-    this.statElements.basedamage.textContent = this.player.baseDamage;
+  // Update player health
+  const healthPercent = (this.player.health / this.player.maxHealth) * 100;
+  this.playerHealthBar.style.width = healthPercent + '%';
+  this.playerHealthBar.textContent = `${this.player.health} / ${this.player.maxHealth}`;
 
+  // Update player stats
+  this.statElements.str.textContent = this.player.str;
+  this.statElements.agi.textContent = this.player.agi;
+  this.statElements.int.textContent = this.player.int;
+  this.statElements.chr.textContent = this.player.chr;
+  this.statElements.end.textContent = this.player.end;
+  this.statElements.wis.textContent = this.player.wis;
+  this.statElements.soulPower.textContent = `${this.player.soulPower} (Neutral)`; // You can change "(Neutral)" dynamically if needed
+  this.statElements.basedamage.textContent = this.player.baseDamage;
 
-    // Update enemy info
-    if (this.enemy) {
-      const enemyHealthPercent = (this.enemy.health / this.enemy.maxHealth) * 100;
-      this.enemyHealthBar.style.width = enemyHealthPercent + '%';
-      this.enemyHealthBar.textContent = `${this.enemy.health} / ${this.enemy.maxHealth}`;
-      this.enemyNameEl.textContent = this.enemy.name;
-      this.enemyImageEl.src = this.enemy.imageSrc;
-      this.enemyImageEl.alt = this.enemy.name;
-      this.enemyInfoEl.hidden = false;
-    } else {
-      this.enemyInfoEl.hidden = true;
-    }
+  // Update enemy info
+  if (this.enemy) {
+    const enemyHealthPercent = (this.enemy.health / this.enemy.maxHealth) * 100;
+    this.enemyHealthBar.style.width = enemyHealthPercent + '%';
+    this.enemyHealthBar.textContent = `${this.enemy.health} / ${this.enemy.maxHealth}`;
+    this.enemyNameEl.textContent = this.enemy.name;
+    this.enemyImageEl.src = this.enemy.imageSrc;
+    this.enemyImageEl.alt = this.enemy.name;
+    this.enemyInfoEl.hidden = false;
+  } else {
+    this.enemyInfoEl.hidden = true;
   }
+}
+
 
   showEnemyInStory() {
     if (this.enemy) {

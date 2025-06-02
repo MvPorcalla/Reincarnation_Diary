@@ -1,22 +1,28 @@
-// gameManager.js
-import { Player } from './player.js';
+import { setPlayerName, Player } from './player.js';
 import { createEnemy } from './enemy.js';
 import { Combat } from './combat.js';
 import { UI } from './ui.js';
 import { story } from './story.js';
 import { validateStory } from './debugger.js';
 
-// ============================= Debbugging and Validation =============================
-// Validate the story structure before starting the game
+// ============================= Debugging and Validation =============================
 const isDev = true; // Set to false before deploying
 
 if (isDev) {
   validateStory(story);
 }
-// ============================= Debbugging and Validation =============================
+// ============================= Debugging and Validation =============================
 
+// Function to ask for player name (can replace prompt with UI later)
+function askForPlayerName() {
+  const name = prompt("Enter your player name (leave blank for random):");
+  setPlayerName(name);
+}
 
-let player = new Player("Hero");
+// Ask for player name before creating player
+askForPlayerName();
+
+let player = new Player();  // Uses the updated playerName from player.js
 let currentEnemy = null;
 let combat = null;
 
@@ -44,8 +50,6 @@ function renderScene() {
 
   // Combat scene
   if (scene.encounter) {
-    // Clone enemy by creating a new Enemy instance using the original enemy's properties
-      // currentEnemy = Object.assign(Object.create(Object.getPrototypeOf(scene.encounter)), scene.encounter);
     currentEnemy = createEnemy({
       name: scene.encounter.name,
       maxHealth: scene.encounter.maxHealth,
@@ -95,7 +99,8 @@ function gameOver() {
 }
 
 function resetGame() {
-  player = new Player("Hero");
+  askForPlayerName();  // Ask for player name again on restart
+  player = new Player();
   ui.player = player;
   ui.enemy = null;
 

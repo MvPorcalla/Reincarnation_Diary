@@ -3,15 +3,13 @@ export class Combat {
   constructor(player, enemy, ui) {
     this.player = player;
     this.enemy = enemy;
-    this.ui = ui; // Object that has method logCombat(message)
-    this.turn = null; // We'll set this dynamically
+    this.ui = ui; // Object with logCombat(message), flashEffect(element, className), updateStats()
+    this.turn = null; // Current turn: 'player' or 'enemy'
   }
 
-  // New method to determine who goes first based on speed + randomness
+  // Determine who goes first based on agility + random roll
   determineTurnOrder() {
-    // Use player's agility
     const playerAgility = Number(this.player.agi) || 0;
-    // Use enemy agility or fallback to 0 if not defined
     const enemyAgility = Number(this.enemy.agi) || 0;
 
     const playerInitiative = playerAgility + Math.floor(Math.random() * 20) + 1;
@@ -23,85 +21,81 @@ export class Combat {
     if (playerInitiative > enemyInitiative) return 'player';
     if (enemyInitiative > playerInitiative) return 'enemy';
 
+    // Tie-breaker random
     return Math.random() < 0.5 ? 'player' : 'enemy';
   }
 
+  playerAttack() {
+    if (this.turn !== 'player') return;
 
+    const { damage, isCrit } = this.player.attack();
+    const dodged = this.enemy.takeDamage(damage);
 
-playerAttack() {
-  if (this.turn !== 'player') return;
+    if (dodged) {
+      this.ui.logCombat(`${this.enemy.name} dodged the attack!`);
+      this.ui.flashEffect(this.ui.enemyHealthBar, 'flash-dodge'); // Flash on dodge
+    } else {
+      this.ui.logCombat(`${this.player.name} dealt ${damage} damage${isCrit ? ' (Critical!)' : ''} to ${this.enemy.name}.`);
+      if (isCrit) {
+        this.ui.flashEffect(this.ui.enemyHealthBar, 'flash-crit'); // Flash on crit
+      }
+    }
 
-  const { damage, isCrit } = this.player.attack();
-  this.enemy.takeDamage(damage);
+    this.checkCombatStatus();
 
-  // Flash enemy health bar if critical hit
-  if (isCrit) {
-    console.log('Player critical hit! Flashing enemy health bar.');
-    this.ui.flashEffect(this.ui.enemyHealthBar, 'flash-crit');
+    // Switch turn if combat still ongoing
+    if (this.enemy.isAlive()) {
+      this.turn = 'enemy';
+      // Enemy attacks after short delay
+      setTimeout(() => this.enemyAttack(), 1000);
+    }
   }
 
-  this.ui.logCombat(`${this.player.name} dealt ${damage} damage${isCrit ? ' (Critical!)' : ''} to ${this.enemy.name}.`);
+  enemyAttack() {
+    if (this.turn !== 'enemy') return;
 
-  this.turn = 'enemy';
-  this.checkCombatStatus();
-}
+    const { damage, isCrit } = this.enemy.attack();
+    const dodged = this.player.takeDamage(damage);
 
-enemyAttack() {
-  if (this.turn !== 'enemy') return;
+    const damageDealt = dodged ? 0 : damage;
+    const statusTags = [];
 
-  const { damage, isCrit } = this.enemy.attack();
-  const dodged = this.player.takeDamage(damage);
+    if (isCrit) statusTags.push('Critical!');
+    if (dodged) statusTags.push('Dodged!');
 
-  const damageDealt = dodged ? 0 : damage;
-  const statusTags = [];
+    if (dodged) {
+      this.ui.flashEffect(this.ui.playerHealthBar, 'flash-dodge'); // Flash on dodge
+    } else if (isCrit) {
+      this.ui.flashEffect(this.ui.playerHealthBar, 'flash-crit'); // Flash on crit
+    }
 
-  if (isCrit) statusTags.push('Critical!');
-  if (dodged) statusTags.push('Dodged!');
+    const statusText = statusTags.length ? ` (${statusTags.join(' ')})` : '';
 
-  // Flash player health bar for crit or dodge
-  if (dodged) {
-    this.ui.flashEffect(this.ui.playerHealthBar, 'flash-dodge');
-  } else if (isCrit) {
-    this.ui.flashEffect(this.ui.playerHealthBar, 'flash-crit');
+    this.ui.logCombat(`${this.enemy.name} dealt ${damageDealt} damage${statusText} to ${this.player.name}.`);
+
+    this.checkCombatStatus();
+
+    // Switch turn if combat still ongoing
+    if (this.player.isAlive()) {
+      this.turn = 'player';
+      this.ui.updateStats();
+    }
   }
-
-  const statusText = statusTags.length ? ` (${statusTags.join(' ')})` : '';
-
-  this.ui.logCombat(`${this.enemy.name} dealt ${damageDealt} damage${statusText} to ${this.player.name}.`);
-
-  this.turn = 'player';
-  this.ui.updateStats();
-
-  if (this.player.health <= 0) {
-    window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' }}));
-  }
-}
-
 
   checkCombatStatus() {
     if (!this.player.isAlive()) {
       this.ui.logCombat(`${this.player.name} has been defeated!`);
-      const event = new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' } });
-      window.dispatchEvent(event);
+      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' } }));
       return;
     }
 
     if (!this.enemy.isAlive()) {
       this.ui.logCombat(`${this.enemy.name} has been defeated!`);
-      const event = new CustomEvent('combatEnded', { detail: { result: 'enemyDefeated' } });
-      window.dispatchEvent(event);
+      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'enemyDefeated' } }));
       return;
     }
 
     this.ui.updateStats();
-
-    if (this.turn === 'enemy') {
-      setTimeout(() => {
-        if (this.player.isAlive()) {
-          this.enemyAttack();
-        }
-      }, 1000);
-    }
   }
 
   start() {
@@ -117,4 +111,3 @@ enemyAttack() {
     }
   }
 }
-

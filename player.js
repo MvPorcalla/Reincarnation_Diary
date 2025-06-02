@@ -1,12 +1,31 @@
 // player.js
+
+// List of random names
+const randomNames = [
+  "Aria", "Leo", "Mira", "Zane", "Luna", "Kai", "Nova", "Rex", "Sage", "Tara"
+];
+
+// Helper to get random name
+function getRandomName() {
+  return randomNames[Math.floor(Math.random() * randomNames.length)];
+}
+
+// Declare a global variable for player name inside this module, default random
+export let playerName = getRandomName();
+
+// A function to update the playerName variable
+export function setPlayerName(name) {
+  playerName = name || getRandomName();  // If empty or null, generate random name
+}
+
+// Player class uses the global playerName variable by default
 export class Player {
-  constructor(name) {
+  constructor(name = playerName) {
     this.name = name;
     this.maxHealth = this.getRandomInt(80, 1120);
     this.health = this.maxHealth;
-
     this.str = this.getRandomInt(5, 12);
-    this.agi = this.getRandomInt(5, 12); // Add agility
+    this.agi = this.getRandomInt(5, 12);
     this.int = this.getRandomInt(5, 12);
     this.chr = this.getRandomInt(5, 12);
     this.end = this.getRandomInt(5, 12);
@@ -14,7 +33,7 @@ export class Player {
     this.soulPower = 50;
     this.baseDamage = this.getRandomInt(8, 12);
     this.critChance = Math.random() * 0.15;
-    this.dodgeChance = 0.15; // 15% chance to dodge
+    this.dodgeChance = 0.15;
   }
 
   getRandomInt(min, max) {
@@ -47,8 +66,6 @@ export class Player {
 
     return dodged;
   }
-
-
 
   isAlive() {
     return this.health > 0;
