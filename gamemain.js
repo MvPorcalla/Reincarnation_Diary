@@ -5,14 +5,19 @@ import { UI } from './ui.js';
 import { story } from './story.js';
 import { enemyTiers } from './enemy.js';
 
-const player = new Player("Hero");
+let player = new Player("Hero");
 let currentEnemy = null;
 let combat = null;
 
 const ui = new UI(player, null);
-const continueBtn = document.getElementById('continue-btn');
 
-// Define the assignRandomEnemy function here or import it if in another file
+// Button elements
+const continueBtn = document.getElementById('continue-btn');
+const endGameBtn = document.getElementById('end-game-btn');
+
+continueBtn.hidden = true;
+endGameBtn.hidden = true; // Hide End Game at the start
+
 function assignRandomEnemy() {
   const allEnemies = [...enemyTiers[1], ...enemyTiers[2]];
   const randomIndex = Math.floor(Math.random() * allEnemies.length);
@@ -21,11 +26,11 @@ function assignRandomEnemy() {
 
 function goToScene(sceneName) {
   if (sceneName === 'encounterRandomEnemy') {
-    assignRandomEnemy(); // assign a random enemy before entering that scene
+    assignRandomEnemy();
   }
 
   story.setScene(sceneName, player);
-  renderScene(sceneName);
+  renderScene();
 }
 
 function renderScene() {
@@ -34,31 +39,30 @@ function renderScene() {
   ui.clearChoices();
 
   if (scene.encounter) {
-    // Clone enemy instance
+    // Initialize combat
     currentEnemy = Object.assign(Object.create(Object.getPrototypeOf(scene.encounter)), scene.encounter);
     combat = new Combat(player, currentEnemy, ui);
     ui.enemy = currentEnemy;
-
-    // Show enemy info + combat log in story text
     ui.combatLog = '';
-    ui.showEnemyInStory();
 
-    ui.clearChoices();
+    ui.showEnemyInStory();
     ui.createChoiceButton('Attack', () => {
       combat.playerAttack();
+
+      // Check for player defeat after attack
+      if (player.health <= 0) {
+        gameOver();
+      }
     });
 
     combat.start();
-
   } else {
-    // Normal story display
-    ui.enemy = null; // Clear enemy reference so UI doesn't show enemy info
-    ui.storyTextEl.textContent = scene.text;
-    ui.clearChoices();
+    // Standard story scene
+    ui.enemy = null;
 
     for (const choice of scene.choices) {
       ui.createChoiceButton(choice.text, () => {
-        goToScene(choice.nextScene);  // Use goToScene here instead of story.setScene + renderScene
+        goToScene(choice.nextScene);
       });
     }
   }
@@ -66,36 +70,54 @@ function renderScene() {
   ui.updateStats();
 }
 
-// window.addEventListener('combatEnded', () => {
-//   ui.enemy = null;         
-//   ui.combatLog = '';       
-//   story.setScene('start', player);  // pass player here too
-//   renderScene();
-//   ui.updateStats();
-// });
+function gameOver() {
+  ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
+  ui.clearChoices();
+  endGameBtn.hidden = false;  // Show End Game button
+  continueBtn.hidden = true;
+}
 
+function resetGame() {
+  player = new Player("Hero");
+  ui.player = player;
+  ui.enemy = null;
+  endGameBtn.hidden = true;
+  continueBtn.hidden = true;
+
+  story.setScene('start', player);
+  renderScene();
+  ui.updateStats();
+}
+
+// When combat ends
 window.addEventListener('combatEnded', (e) => {
-  ui.enemy = null;         
-  ui.combatLog = '';       
+  const result = e.detail.result;
 
-  // Show the continue button when combat ends
+  if (result === 'playerDefeated') {
+    gameOver();
+    return;
+  }
+
+  // Otherwise, combat ended normally
+  ui.enemy = null;
+  ui.combatLog = '';
   continueBtn.hidden = false;
-
-  // Disable combat buttons if any
   ui.clearChoices();
 
-  // Assign a handler to continue button to move to the next scene or start
   continueBtn.onclick = () => {
     continueBtn.hidden = true;
-    // Go back to a safe scene or whatever you want after combat
     story.setScene('start', player);
     renderScene();
     ui.updateStats();
   };
-
-  // Optionally update UI to show player status etc.
 });
 
 
-// Start game at 'start' scene only
+// End Game button handler
+endGameBtn.addEventListener('click', () => {
+  resetGame();
+});
+
+
+// Start the game at the initial scene
 goToScene('start');

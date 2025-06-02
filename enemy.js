@@ -29,7 +29,7 @@ export const enemyTiers = {
   1: [
     new Enemy({ 
       name: "Goblin", 
-      maxHealth: 30, 
+      maxHealth: 130, 
       damage: 5, 
       critChance: 0.1, 
       tier: 1,
@@ -37,7 +37,7 @@ export const enemyTiers = {
     }),
     new Enemy({ 
       name: "Slime", 
-      maxHealth: 25, 
+      maxHealth: 525, 
       damage: 4, 
       critChance: 0.05, 
       tier: 1,
@@ -55,7 +55,7 @@ export const enemyTiers = {
     }),
     new Enemy({ 
       name: "Skeleton", 
-      maxHealth: 40, 
+      maxHealth: 640, 
       damage: 8, 
       critChance: 0.12, 
       tier: 2,

@@ -1,3 +1,4 @@
+/* uistyle.css */
 /* Reset */
 * {
   box-sizing: border-box;
@@ -10,7 +11,7 @@ body {
   background-color: #121212;
   color: #eee;
   font-family: 'Courier New', Courier, monospace;
-  padding: 20px;
+  padding: 10px;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -138,17 +139,20 @@ body {
 /* Main UI */
 #main-ui {
   width: 70%;
-  padding: 30px;
+  padding:10px;
   display: flex;
   flex-direction: column;
   height: 100%;
+  max-height: 95vh;
+  min-height: 0; 
+  overflow: hidden;
 }
 
 
 /* Make story text take available vertical space */
 #story-text {
-  flex: 8; /* 80% of the height */
-  font-size: 18px;
+  flex: 7; /* 80% of the height */
+  font-size: 16px;
   line-height: 1.4;
   white-space: pre-wrap;
   overflow-y: auto;
@@ -159,13 +163,14 @@ body {
 }
 
 #choices-container {
-  flex: 2; /* 20% of the height */
+  flex: 3; /* 20% of the height */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   gap: 10px;
-  padding-top: 20px;
+  padding-top: 10px;
   overflow-y: auto; /* Optional: scroll if too many buttons */
+
 }
 
 
@@ -178,7 +183,6 @@ body {
   color: #eee;
   font-size: 16px;
   text-align: left;
-  font-family: inherit;
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
 }
@@ -190,26 +194,6 @@ body {
   outline: none;
 }
 
-
-/* End Game Button */
-#end-btn {
-  margin-top: 30px;
-  align-self: center;
-  padding: 14px 25px;
-  width: 180px;
-  background-color: #f1c40f;
-  border: none;
-  color: #222;
-  font-weight: bold;
-  font-size: 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#end-btn:hover {
-  background-color: #d4ac0d;
-}
 
 /* Responsive Layout */
 @media (max-width: 720px) {

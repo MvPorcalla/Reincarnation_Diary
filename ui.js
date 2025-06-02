@@ -1,3 +1,4 @@
+// ui.js
 export class UI {
   constructor(player, enemy) {
     this.player = player;

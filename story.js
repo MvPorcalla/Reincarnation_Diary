@@ -9,7 +9,9 @@ export const story = {
       text: "You wake up in a dark forest. What do you do?",
       choices: [
         { text: "Walk forward", nextScene: 'randomEncounter' },
-        { text: "Rest", nextScene: 'rest' }
+        { text: "Rest", nextScene: 'rest' },
+        { text: "Climb a tree to get a better view", nextScene: 'treeView' },
+        { text: "Call out for help", nextScene: 'callForHelp' }
       ]
     },
 
@@ -114,8 +116,39 @@ export const story = {
       choices: [
         { text: "Restart Game", nextScene: 'start' }
       ]
-    }
+    },
 
+    // New scenes added for the new start choices:
+    treeView: {
+      text: "You climb a tall tree and spot a village in the distance.",
+      choices: [
+        { text: "Head towards the village", nextScene: 'village' },
+        { text: "Climb down and explore the forest", nextScene: 'randomEncounter' }
+      ]
+    },
+
+    callForHelp: {
+      text: "You call out for help loudly. After a moment, you hear a response!",
+      choices: [
+        { text: "Follow the voice", nextScene: 'friendlyTraveler' },
+        { text: "Ignore and continue wandering", nextScene: 'randomEncounter' }
+      ]
+    },
+
+    village: {
+      text: "You arrive at the village, safe and sound. Your adventure continues peacefully.",
+      choices: [
+        { text: "Restart Game", nextScene: 'start' }
+      ]
+    },
+
+    friendlyTraveler: {
+      text: "A friendly traveler finds you and offers to guide you out of the forest.",
+      choices: [
+        { text: "Accept help", nextScene: 'gameOver' },
+        { text: "Politely decline and go alone", nextScene: 'randomEncounter' }
+      ]
+    },
   },
 
   getScene(sceneName) {
