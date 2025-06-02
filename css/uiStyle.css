@@ -168,7 +168,7 @@ body {
   flex-direction: column;
   /* justify-content: center; */
   gap: 10px;
-  padding-top: 10px;
+  padding-top: 20px;
   overflow-y: auto; /* Optional: scroll if too many buttons */
 
 }

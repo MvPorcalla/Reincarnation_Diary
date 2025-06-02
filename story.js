@@ -2,7 +2,7 @@ import { enemyTiers } from './enemy.js';
 
 export const story = {
   currentScene: 'start',
-  playerHealth: 100,  // Starting health for the player
+  playerHealth: 100,
 
   scenes: {
     start: {
@@ -38,9 +38,8 @@ export const story = {
       text: "You attempt to sneak past the enemy...",
       choices: [],
       onEnter(player) {
-        // Simple sneak chance: 50% success
         const success = Math.random() < 0.5;
-        if(success) {
+        if (success) {
           this.text = "You successfully sneak past the enemy and see a path forward.";
           this.choices = [
             { text: "Follow the path", nextScene: 'findChest' }
@@ -54,34 +53,21 @@ export const story = {
       }
     },
 
-    encounterGoblin: {
-      text: "A Goblin jumps out to attack!",
-      encounter: enemyTiers[1][0], // Goblin enemy from tier 1
-      choices: []
-    },
-
-    encounterSlime: {
-      text: "A Slime oozes towards you!",
-      encounter: enemyTiers[1][1], // Slime enemy from tier 1
-      choices: []
-    },
-
-    encounterOrc: {
-      text: "A fierce Orc blocks your path!",
-      encounter: enemyTiers[2][0], // Orc enemy from tier 2
-      choices: []
-    },
-
-    encounterSkeleton: {
-      text: "A rattling Skeleton attacks!",
-      encounter: enemyTiers[2][1], // Skeleton enemy from tier 2
-      choices: []
-    },
-
     encounterRandomEnemy: {
       text: "You face an enemy!",
-      encounter: null, // will be assigned dynamically in game logic
-      choices: []
+      encounter: null,
+      choices: [],
+      onEnter(player) {
+        // Flatten all tiers into one array
+        const allEnemies = Object.values(enemyTiers).flat();
+        const randomEnemy = allEnemies[Math.floor(Math.random() * allEnemies.length)];
+        this.encounter = randomEnemy;
+        this.text = `A wild ${randomEnemy.name} appears!`;
+        this.choices = [
+          { text: "Fight", nextScene: 'gameOver' } // Replace 'gameOver' with your combat resolution
+        ];
+        console.log(`Encountered: ${randomEnemy.name}`);
+      }
     },
 
     findChest: {
@@ -118,7 +104,6 @@ export const story = {
       ]
     },
 
-    // New scenes added for the new start choices:
     treeView: {
       text: "You climb a tall tree and spot a village in the distance.",
       choices: [
@@ -158,7 +143,6 @@ export const story = {
   setScene(sceneName, player) {
     this.currentScene = sceneName;
     const scene = this.getScene(sceneName);
-    // Call onEnter if defined (like resting to recover health or sneak attempt)
     if (scene && typeof scene.onEnter === 'function') {
       scene.onEnter(player);
     }

@@ -1,7 +1,4 @@
 // combat.js
-import { Player } from './player.js';
-import { Enemy } from './enemy.js';
-
 export class Combat {
   constructor(player, enemy, ui) {
     this.player = player;
