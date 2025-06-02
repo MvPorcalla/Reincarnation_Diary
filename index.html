@@ -14,51 +14,10 @@
       max-width: 150px;
       margin: 10px auto 0 auto;
     }
-
-    /* Fantasy style for buttons */
-    #continue-btn,
-    #end-game-btn {
-      font-family: 'Cinzel', serif;
-      background: linear-gradient(135deg, #6b0f1a, #b91372, #ff5e62);
-      border: 2px solid #fff;
-      border-radius: 12px;
-      padding: 12px 28px;
-      color: #fff;
-      font-weight: 700;
-      font-size: 1.1rem;
-      cursor: pointer;
-      box-shadow:
-        0 0 5px #ff5e62,
-        0 0 10px #b91372,
-        0 0 15px #6b0f1a;
-      text-shadow: 0 0 5px #fff;
-      transition: all 0.3s ease;
-      user-select: none;
-    }
-
-    #continue-btn:hover,
-    #end-game-btn:hover {
-      background: linear-gradient(135deg, #ff5e62, #b91372, #6b0f1a);
-      box-shadow:
-        0 0 10px #fff,
-        0 0 20px #ff5e62,
-        0 0 30px #b91372;
-      color: #fff;
-    }           
-
-    #continue-btn:focus,
-    #end-game-btn:focus {
-      outline: none;
-      box-shadow:
-        0 0 15px #fff,
-        0 0 30px #ff5e62,
-        0 0 45px #b91372;
-    }
-
-    #continue-btn[hidden] {
-      display: none !important;
-    }
-
+    /* #enemy-info {
+      text-align: center;
+      margin-bottom: 20px;
+    } */
 
   </style>
 </head>
@@ -89,12 +48,11 @@
         <div class="stat soul-power"><strong>Soul Power:</strong> <span id="soul-power">50 (Neutral)</span></div>
         <div class="stat"><strong>Base Damage:</strong> <span id="base-damage"></span></div>
 
-
-
         <div id="inventory">
           <div id="equipped-items" class="inventory-grid equipped-grid"></div>
           <div id="general-inventory" class="inventory-grid general-grid"></div>
         </div>
+        
       </aside>
       
 
@@ -109,15 +67,14 @@
           <img id="enemy-image" src="" alt="Enemy Image" class="enemy-image">
         </div>
 
-
-        <div id="story-text" class="monospace"></div>
-        <div id="choices-container"></div>
-        <button id="continue-btn">Continue</button>
-        <button id="end-game-btn">End Game</button>
+        <div id="story-text" class="monospace">
+          <!-- story text content inserted here -->
+        </div>
+        <div id="choices-container">
+          <!-- choices text goes here -->
+        </div>
 
       </main>
-
-
     </div>
   </div>
 

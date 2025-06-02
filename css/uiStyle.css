@@ -152,13 +152,14 @@ body {
 /* Make story text take available vertical space */
 #story-text {
   flex: 7; /* 80% of the height */
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.4;
   white-space: pre-wrap;
   overflow-y: auto;
   user-select: text;
   padding-right: 5px;
   padding-bottom: 20px;
+  padding-top: 20px;
   border-bottom: 1px solid #666;
 }
 

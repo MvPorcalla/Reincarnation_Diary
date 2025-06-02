@@ -3,7 +3,6 @@ import { Player } from './player.js';
 import { Combat } from './combat.js';
 import { UI } from './ui.js';
 import { story } from './story.js';
-import { enemyTiers } from './enemy.js';
 
 let player = new Player("Hero");
 let currentEnemy = null;
@@ -11,45 +10,34 @@ let combat = null;
 
 const ui = new UI(player, null);
 
-// Button elements
-const continueBtn = document.getElementById('continue-btn');
-const endGameBtn = document.getElementById('end-game-btn');
-
-continueBtn.hidden = true;
-endGameBtn.hidden = true; // Hide End Game at the start
-
-function assignRandomEnemy() {
-  const allEnemies = [...enemyTiers[1], ...enemyTiers[2]];
-  const randomIndex = Math.floor(Math.random() * allEnemies.length);
-  story.scenes.encounterRandomEnemy.encounter = allEnemies[randomIndex];
-}
-
 function goToScene(sceneName) {
-  if (sceneName === 'encounterRandomEnemy') {
-    assignRandomEnemy();
-  }
-
   story.setScene(sceneName, player);
   renderScene();
 }
 
 function renderScene() {
   const scene = story.getScene(story.currentScene);
+
+  // Update story text
   ui.storyTextEl.textContent = scene.text;
   ui.clearChoices();
 
+  // Combat scene
   if (scene.encounter) {
-    // Initialize combat
+    // Clone the enemy so the original template isn't mutated
     currentEnemy = Object.assign(Object.create(Object.getPrototypeOf(scene.encounter)), scene.encounter);
+
     combat = new Combat(player, currentEnemy, ui);
     ui.enemy = currentEnemy;
     ui.combatLog = '';
 
     ui.showEnemyInStory();
+
+    // Add attack button
     ui.createChoiceButton('Attack', () => {
       combat.playerAttack();
 
-      // Check for player defeat after attack
+      // Check if player is defeated right after attack
       if (player.health <= 0) {
         gameOver();
       }
@@ -57,9 +45,8 @@ function renderScene() {
 
     combat.start();
   } else {
-    // Standard story scene
+    // Non-combat scene: show choices
     ui.enemy = null;
-
     for (const choice of scene.choices) {
       ui.createChoiceButton(choice.text, () => {
         goToScene(choice.nextScene);
@@ -73,51 +60,42 @@ function renderScene() {
 function gameOver() {
   ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
   ui.clearChoices();
-  endGameBtn.hidden = false;  // Show End Game button
-  continueBtn.hidden = true;
+  ui.createChoiceButton('Restart', () => {
+    resetGame();
+  });
 }
 
 function resetGame() {
   player = new Player("Hero");
   ui.player = player;
   ui.enemy = null;
-  endGameBtn.hidden = true;
-  continueBtn.hidden = true;
 
   story.setScene('start', player);
   renderScene();
   ui.updateStats();
 }
 
-// When combat ends
+// Handle combat end event
 window.addEventListener('combatEnded', (e) => {
-  const result = e.detail.result;
+  const detail = e.detail || {};
 
-  if (result === 'playerDefeated') {
+  if (detail.result === 'playerDefeated') {
     gameOver();
     return;
   }
 
-  // Otherwise, combat ended normally
-  ui.enemy = null;
-  ui.combatLog = '';
-  continueBtn.hidden = false;
+  // Player won
+  const nextScene = player.nextAfterBattleScene || 'start';
+  story.setScene(nextScene, player);
+
+  // Show Continue button
   ui.clearChoices();
-
-  continueBtn.onclick = () => {
-    continueBtn.hidden = true;
-    story.setScene('start', player);
+  ui.createChoiceButton('Continue', () => {
     renderScene();
-    ui.updateStats();
-  };
+  });
+
+  ui.updateStats();
 });
-
-
-// End Game button handler
-endGameBtn.addEventListener('click', () => {
-  resetGame();
-});
-
 
 // Start the game at the initial scene
 goToScene('start');

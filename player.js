@@ -2,18 +2,17 @@
 export class Player {
   constructor(name) {
     this.name = name;
-    this.maxHealth = this.getRandomInt(80, 120);
+    this.maxHealth = this.getRandomInt(80, 1120);
     this.health = this.maxHealth;
 
-    this.str = this.getRandomInt(5, 15);
-    this.agi = this.getRandomInt(5, 15); // Add agility
-    this.int = this.getRandomInt(5, 15);
-    this.chr = this.getRandomInt(5, 15);
-    this.end = this.getRandomInt(5, 15);
-    this.wis = this.getRandomInt(5, 15);
-
+    this.str = this.getRandomInt(5, 12);
+    this.agi = this.getRandomInt(5, 12); // Add agility
+    this.int = this.getRandomInt(5, 12);
+    this.chr = this.getRandomInt(5, 12);
+    this.end = this.getRandomInt(5, 12);
+    this.wis = this.getRandomInt(5, 12);
     this.soulPower = 50;
-    this.baseDamage = this.getRandomInt(8, 15);
+    this.baseDamage = this.getRandomInt(8, 12);
     this.critChance = Math.random() * 0.15;
     this.dodgeChance = 0.15; // 15% chance to dodge
   }

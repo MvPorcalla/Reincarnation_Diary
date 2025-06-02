@@ -1,150 +1,176 @@
+// story.js
 import { enemyTiers } from './enemy.js';
+import { createScene, recoverHealth, getRandomElement } from './utils.js';
 
 export const story = {
   currentScene: 'start',
-  playerHealth: 100,
 
   scenes: {
-    start: {
+    start: createScene({
       text: "You wake up in a dark forest. What do you do?",
       choices: [
-        { text: "Walk forward", nextScene: 'randomEncounter' },
+        { text: "Walk forward", nextScene: 'walkForwardEncounter' },
         { text: "Rest", nextScene: 'rest' },
-        { text: "Climb a tree to get a better view", nextScene: 'treeView' },
-        { text: "Call out for help", nextScene: 'callForHelp' }
       ]
-    },
+    }),
 
-    rest: {
-      text: "You take a moment to rest and recover 10 health.",
-      choices: [
-        { text: "Continue walking", nextScene: 'randomEncounter' }
-      ],
-      onEnter(player) {
-        player.health = Math.min(player.health + 10, player.maxHealth);
-        console.log(`Health recovered! Current health: ${player.health}`);
-      }
-    },
-
-    randomEncounter: {
-      text: "Something approaches from the shadows...",
-      choices: [
-        { text: "Prepare to fight!", nextScene: 'encounterRandomEnemy' },
-        { text: "Try to sneak past", nextScene: 'sneakAttempt' }
-      ]
-    },
-
-    sneakAttempt: {
-      text: "You attempt to sneak past the enemy...",
+    rest: createScene({
+      text: "You take a moment to rest.",
       choices: [],
-      onEnter(player) {
-        const success = Math.random() < 0.5;
-        if (success) {
-          this.text = "You successfully sneak past the enemy and see a path forward.";
-          this.choices = [
-            { text: "Follow the path", nextScene: 'findChest' }
-          ];
+      onEnter(player, params) {
+        // 50% chance to recover health, else encounter enemy
+        const chance = Math.random();
+        if (chance < 0.5) {
+          recoverHealth(player, 10);
+          this.text = "You recover 10 health. What next?";
+          this.choices = [{ text: "Continue walking", nextScene: 'walkForwardEncounter' }];
         } else {
-          this.text = "You fail to sneak past and the enemy attacks!";
-          this.choices = [
-            { text: "Prepare to fight!", nextScene: 'encounterRandomEnemy' }
-          ];
+          this.text = "As you rest, an enemy approaches!";
+          this.choices = [{ text: "Prepare to fight", nextScene: 'randomEncounterFight', params: { tier: 1 } }];
         }
       }
-    },
+    }),
 
-    encounterRandomEnemy: {
-      text: "You face an enemy!",
-      encounter: null,
-      choices: [],
-      onEnter(player) {
-        // Flatten all tiers into one array
-        const allEnemies = Object.values(enemyTiers).flat();
-        const randomEnemy = allEnemies[Math.floor(Math.random() * allEnemies.length)];
-        this.encounter = randomEnemy;
-        this.text = `A wild ${randomEnemy.name} appears!`;
-        this.choices = [
-          { text: "Fight", nextScene: 'gameOver' } // Replace 'gameOver' with your combat resolution
-        ];
-        console.log(`Encountered: ${randomEnemy.name}`);
-      }
-    },
-
-    findChest: {
-      text: "After the fight, you find a mysterious chest partially buried in the ground.",
+    walkForwardEncounter: createScene({
+      text: "You walk forward and encounter a wild enemy.",
       choices: [
-        { text: "Open the chest", nextScene: 'openChest' },
-        { text: "Ignore it and move on", nextScene: 'forestPath' }
+        { text: "Fight", nextScene: 'randomEncounterFight', params: { tier: 1 } },
+        { text: "Run away", nextScene: 'gameOver' }
       ]
-    },
+    }),
 
-    openChest: {
-      text: "You open the chest slowly. Inside you find a treasure of gold and a magical amulet.",
+    randomEncounterFight: createScene({
+      text: "The battle begins!",
+      choices: [],
+      onEnter(player, params = {}) {
+        const tier = params.tier || 1; // Default to tier 1 if not specified
+        const enemies = enemyTiers[tier];
+        if (!enemies || enemies.length === 0) {
+          this.text = `No enemies found in Tier ${tier}.`;
+          this.choices = [{ text: "Go back", nextScene: 'start' }];
+          return;
+        }
+
+        const enemy = getRandomElement(enemies);
+        this.encounter = enemy;
+
+        // Mark that player is in combat
+        player.currentEnemy = enemy;
+        player.nextAfterBattleScene = 'postFightChoice'; // where to go after combat
+
+        this.text = `You fight the wild ${enemy.name}!`;
+        this.choices = [];
+      }
+    }),
+
+    postFightChoice: createScene({
+      text: "You defeated the enemy! What do you want to do?",
       choices: [
-        { text: "Take the treasure and amulet", nextScene: 'gameOver' }
+        { text: "Continue walking", nextScene: 'walkForwardAfterFight' },
+        { text: "Rest", nextScene: 'rest' }
       ],
       onEnter(player) {
-        player.gold = (player.gold || 0) + 100;
-        player.hasAmulet = true;
-        console.log("You obtained 100 gold and a magical amulet!");
+        delete player.currentEnemy;
+        delete player.nextAfterBattleScene;
       }
-    },
+    }),
 
-    forestPath: {
-      text: "You decide to ignore the chest and continue down the forest path.",
+    walkForwardAfterFight: createScene({
+      text: "You continue walking and see a mysterious temple ahead.",
       choices: [
-        { text: "Keep going", nextScene: 'gameOver' }
+        { text: "Enter the temple", nextScene: 'templeEntrance' },
+        { text: "Ignore and keep walking", nextScene: 'templeLeave' }
       ]
-    },
+    }),
 
-    gameOver: {
+    templeLeave: createScene({
+      text: "You leave the temple and find a chest behind bushes.",
+      choices: [
+        { text: "Open the chest", nextScene: 'openChestEnd' },
+        { text: "Ignore and end adventure", nextScene: 'gameOver' }
+      ]
+    }),
+
+    openChestEnd: createScene({
+      text: "You open the chest and find gold and jewels.",
+      choices: [
+        { text: "End game", nextScene: 'gameOver' }
+      ],
+      onEnter(player) {
+        player.gold = (player.gold || 0) + 200;
+        console.log("You obtained 200 gold!");
+      }
+    }),
+
+    templeEntrance: createScene({
+      text: "You cautiously enter the temple. Suddenly, a guardian appears!",
+      choices: [
+        { text: "Fight the temple guardian", nextScene: 'templeInnerFight', params: { tier: 2 } },
+        { text: "Run away", nextScene: 'gameOver' }
+      ]
+    }),
+
+    templeInnerFight: createScene({
+      text: "The temple guardian stands before you!",
+      choices: [],
+      onEnter(player, params = {}) {
+        const tier = params.tier || 2; // Default to tier 2 for temple guardian
+        const enemies = enemyTiers[tier];
+        if (!enemies || enemies.length === 0) {
+          this.text = `No enemies found in Tier ${tier}.`;
+          this.choices = [{ text: "Go back", nextScene: 'start' }];
+          return;
+        }
+
+        const enemy = getRandomElement(enemies);
+        this.encounter = enemy;
+
+        player.currentEnemy = enemy;
+        player.nextAfterBattleScene = 'templeVictory';
+
+        this.text = `You fight the temple guardian ${enemy.name}!`;
+        this.choices = [];
+      }
+    }),
+
+    templeVictory: createScene({
+      text: "You defeated the guardian and retrieve an ancient sword!",
+      choices: [
+        { text: "End game", nextScene: 'gameOver' }
+      ],
+      onEnter(player) {
+        player.hasSword = true;
+        console.log("You obtained the ancient sword!");
+        delete player.currentEnemy;
+        delete player.nextAfterBattleScene;
+      }
+    }),
+
+    gameOver: createScene({
       text: "Your adventure ends here. Thanks for playing!",
-      choices: [
-        { text: "Restart Game", nextScene: 'start' }
-      ]
-    },
-
-    treeView: {
-      text: "You climb a tall tree and spot a village in the distance.",
-      choices: [
-        { text: "Head towards the village", nextScene: 'village' },
-        { text: "Climb down and explore the forest", nextScene: 'randomEncounter' }
-      ]
-    },
-
-    callForHelp: {
-      text: "You call out for help loudly. After a moment, you hear a response!",
-      choices: [
-        { text: "Follow the voice", nextScene: 'friendlyTraveler' },
-        { text: "Ignore and continue wandering", nextScene: 'randomEncounter' }
-      ]
-    },
-
-    village: {
-      text: "You arrive at the village, safe and sound. Your adventure continues peacefully.",
-      choices: [
-        { text: "Restart Game", nextScene: 'start' }
-      ]
-    },
-
-    friendlyTraveler: {
-      text: "A friendly traveler finds you and offers to guide you out of the forest.",
-      choices: [
-        { text: "Accept help", nextScene: 'gameOver' },
-        { text: "Politely decline and go alone", nextScene: 'randomEncounter' }
-      ]
-    },
+      choices: [{ text: "Restart Game", nextScene: 'start' }]
+    })
   },
 
   getScene(sceneName) {
     return this.scenes[sceneName];
   },
 
-  setScene(sceneName, player) {
+  // Accepts params object that can have any number of keys
+  setScene(sceneName, player, params = {}) {
     this.currentScene = sceneName;
     const scene = this.getScene(sceneName);
-    if (scene && typeof scene.onEnter === 'function') {
-      scene.onEnter(player);
+    if (scene?.onEnter) {
+      scene.onEnter(player, params);
     }
   }
 };
+
+// Example of choice selection handler you can use with this system
+export function onChoiceSelected(choice, player) {
+  if (choice.params) {
+    story.setScene(choice.nextScene, player, choice.params);
+  } else {
+    story.setScene(choice.nextScene, player);
+  }
+}

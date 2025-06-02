@@ -20,51 +20,58 @@ export class Combat {
   }
 
   enemyAttack() {
-    if (this.turn !== 'enemy') return;
+  if (this.turn !== 'enemy') return;
 
-    const { damage, isCrit } = this.enemy.attack();
-    const dodged = this.player.takeDamage(damage);
+  const { damage, isCrit } = this.enemy.attack();
+  const dodged = this.player.takeDamage(damage);
 
-    if (dodged) {
-      this.ui.logCombat(`${this.player.name} dodged ${this.enemy.name}'s attack!`);
-    } else {
-      this.ui.logCombat(`${this.enemy.name} dealt ${damage} damage${isCrit ? ' (Critical!)' : ''} to ${this.player.name}.`);
-    }
+  const damageDealt = dodged ? 0 : damage;
+  const statusTags = [];
 
-    this.turn = 'player';
-    this.checkCombatStatus();
-  }
+  if (isCrit) statusTags.push('Critical!');
+  if (dodged) statusTags.push('Dodged!');
 
-checkCombatStatus() {
-  if (!this.player.isAlive()) {
-    this.ui.logCombat(`${this.player.name} has been defeated!`);
+  const statusText = statusTags.length ? ` (${statusTags.join(' ')})` : '';
 
-    // Dispatch playerDefeated instead of general combatEnded
-    const event = new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' } });
-    window.dispatchEvent(event);
-    return; // Stop combat here
-  }
+  this.ui.logCombat(`${this.enemy.name} dealt ${damageDealt} damage${statusText} to ${this.player.name}.`);
 
-  if (!this.enemy.isAlive()) {
-    this.ui.logCombat(`${this.enemy.name} has been defeated!`);
-
-    const event = new CustomEvent('combatEnded', { detail: { result: 'enemyDefeated' } });
-    window.dispatchEvent(event);
-    return;
-  }
-
+  this.turn = 'player';
   this.ui.updateStats();
 
-  if (this.turn === 'enemy') {
-    setTimeout(() => {
-      // Only allow enemy to attack if player is still alive
-      if (this.player.isAlive()) {
-        this.enemyAttack();
-      }
-    }, 1000);
+  if (this.player.health <= 0) {
+    window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' }}));
   }
 }
 
+  checkCombatStatus() {
+    if (!this.player.isAlive()) {
+      this.ui.logCombat(`${this.player.name} has been defeated!`);
+
+      // Dispatch playerDefeated instead of general combatEnded
+      const event = new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' } });
+      window.dispatchEvent(event);
+      return; // Stop combat here
+    }
+
+    if (!this.enemy.isAlive()) {
+      this.ui.logCombat(`${this.enemy.name} has been defeated!`);
+
+      const event = new CustomEvent('combatEnded', { detail: { result: 'enemyDefeated' } });
+      window.dispatchEvent(event);
+      return;
+    }
+
+    this.ui.updateStats();
+
+    if (this.turn === 'enemy') {
+      setTimeout(() => {
+        // Only allow enemy to attack if player is still alive
+        if (this.player.isAlive()) {
+          this.enemyAttack();
+        }
+      }, 1000);
+    }
+  }
 
   start() {
     this.ui.logCombat(`A wild ${this.enemy.name} appears!`);

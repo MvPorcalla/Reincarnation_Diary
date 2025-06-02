@@ -88,8 +88,11 @@ export class UI {
   logCombat(message) {
     this.combatLog += message + '\n';
     this.storyTextEl.textContent = this.combatLog;
+    this.storyTextEl.scrollTo({
+      top: this.storyTextEl.scrollHeight,
+      behavior: 'smooth' // smooth scrolling
+    });
   }
-
 
   endCombat(message) {
     this.enemy = null;
@@ -97,7 +100,8 @@ export class UI {
     this.logCombat(`You defeated the enemy!\n`);
     this.clearChoices();
     this.createChoiceButton('Continue', () => {
-      window.dispatchEvent(new Event('combatEnded'));
+      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerWon' }}));
     });
   }
+
 }
