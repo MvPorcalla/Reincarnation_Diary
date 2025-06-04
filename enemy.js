@@ -7,11 +7,9 @@ export class Enemy {
     this.damage = damage;
     this.critChance = critChance;
     this.tier = tier;
-    this.agi = agi;  // Set agility here
+    this.agi = agi;
     this.imageSrc = imageSrc;
-
-    // Add a callback function or event emitter for logging combat, or remove if not needed here
-    this.onCombatLog = null; 
+    this.onCombatLog = null;
   }
 
   attack() {
@@ -21,18 +19,16 @@ export class Enemy {
   }
 
   get dodgeChance() {
-    // 2% dodge chance per agi point, max 30%
     return Math.min(this.agi * 0.02, 0.3);
   }
 
   takeDamage(amount) {
     if (Math.random() < this.dodgeChance) {
-      // Use a callback or event to log combat messages instead of this.ui
       if (this.onCombatLog) this.onCombatLog(`${this.name} dodged the attack!`);
-      return true; // attack dodged, no damage taken
+      return true;
     }
     this.health = Math.max(this.health - amount, 0);
-    return false; // damage taken
+    return false;
   }
 
   isAlive() {
@@ -40,23 +36,24 @@ export class Enemy {
   }
 }
 
-// Factory function to create a new Enemy instance with given parameters
+// Factory function (optional, or just inline)
 export function createEnemy(params) {
   return new Enemy(params);
 }
 
+// Change enemyTiers to store **functions** that return new Enemy instances
 export const enemyTiers = {
   1: [
-    createEnemy({
+    () => createEnemy({
       name: "Goblin",
       maxHealth: 60,
       damage: 9,
       critChance: 0.1,
       tier: 1,
-      agi: 8,  // Add agility here
+      agi: 8,
       imageSrc: './assets/enemies/goblin-girl.png'
     }),
-    createEnemy({
+    () => createEnemy({
       name: "Slime",
       maxHealth: 50,
       damage: 5,
@@ -65,7 +62,7 @@ export const enemyTiers = {
       agi: 5,
       imageSrc: './assets/enemies/slime-girl.png'
     }),
-    createEnemy({
+    () => createEnemy({
       name: "Wild Bat",
       maxHealth: 50,
       damage: 6,
@@ -76,18 +73,18 @@ export const enemyTiers = {
     }),
   ],
   2: [
-    createEnemy({
+    () => createEnemy({
       name: "Orc",
-      maxHealth: 1050,
+      maxHealth: 110,
       damage: 20,
       critChance: 0.15,
       tier: 2,
       agi: 7,
       imageSrc: './assets/enemies/orc-girl.png'
     }),
-    createEnemy({
+    () => createEnemy({
       name: "Skeleton",
-      maxHealth: 640,
+      maxHealth: 90,
       damage: 20,
       critChance: 0.12,
       tier: 2,
@@ -97,3 +94,13 @@ export const enemyTiers = {
   ],
 };
 
+// Utility to get a random enemy instance from a tier
+export function getRandomEnemy(tier) {
+  const enemies = enemyTiers[tier];
+  if (!enemies || enemies.length === 0) {
+    throw new Error(`No enemies defined for tier ${tier}`);
+  }
+  const randomIndex = Math.floor(Math.random() * enemies.length);
+  const enemyFactory = enemies[randomIndex];
+  return enemyFactory(); // Create and return a fresh enemy instance
+}

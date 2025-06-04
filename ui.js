@@ -26,8 +26,7 @@ export class UI {
       end: document.getElementById('stat-end'),
       wis: document.getElementById('stat-wis'),
       soulPower: document.getElementById('soul-power'),
-
-      basedamage: document.getElementById('base-damage') // Make sure this line exists
+      basedamage: document.getElementById('base-damage')
     };
 
     this.combatLogEntries = [];
@@ -40,40 +39,47 @@ export class UI {
       el.classList.remove(className);
     }, 300);
   }
-  
-updateStats() {
-  // Update player name
-  this.playerNameEl.textContent = this.player.name;
 
-  // Update player health
-  const healthPercent = (this.player.health / this.player.maxHealth) * 100;
-  this.playerHealthBar.style.width = healthPercent + '%';
-  this.playerHealthBar.textContent = `${this.player.health} / ${this.player.maxHealth}`;
+  updateHealthBars() {
+    // Player health
+    const healthPercent = (this.player.health / this.player.maxHealth) * 100;
+    this.playerHealthBar.style.width = `${healthPercent}%`;
+    this.playerHealthBar.textContent = `${this.player.health} / ${this.player.maxHealth}`;
 
-  // Update player stats
-  this.statElements.str.textContent = this.player.str;
-  this.statElements.agi.textContent = this.player.agi;
-  this.statElements.int.textContent = this.player.int;
-  this.statElements.chr.textContent = this.player.chr;
-  this.statElements.end.textContent = this.player.end;
-  this.statElements.wis.textContent = this.player.wis;
-  this.statElements.soulPower.textContent = `${this.player.soulPower} (Neutral)`; // You can change "(Neutral)" dynamically if needed
-  this.statElements.basedamage.textContent = this.player.baseDamage;
-
-  // Update enemy info
-  if (this.enemy) {
-    const enemyHealthPercent = (this.enemy.health / this.enemy.maxHealth) * 100;
-    this.enemyHealthBar.style.width = enemyHealthPercent + '%';
-    this.enemyHealthBar.textContent = `${this.enemy.health} / ${this.enemy.maxHealth}`;
-    this.enemyNameEl.textContent = this.enemy.name;
-    this.enemyImageEl.src = this.enemy.imageSrc;
-    this.enemyImageEl.alt = this.enemy.name;
-    this.enemyInfoEl.hidden = false;
-  } else {
-    this.enemyInfoEl.hidden = true;
+    // Enemy health
+    if (this.enemy) {
+      const enemyHealthPercent = (this.enemy.health / this.enemy.maxHealth) * 100;
+      this.enemyHealthBar.style.width = `${enemyHealthPercent}%`;
+      this.enemyHealthBar.textContent = `${this.enemy.health} / ${this.enemy.maxHealth}`;
+    }
   }
-}
 
+  updateStats() {
+    this.playerNameEl.textContent = this.player.name;
+
+    // Update health bars via new method
+    this.updateHealthBars();
+
+    // Update player stats
+    this.statElements.str.textContent = this.player.str;
+    this.statElements.agi.textContent = this.player.agi;
+    this.statElements.int.textContent = this.player.int;
+    this.statElements.chr.textContent = this.player.chr;
+    this.statElements.end.textContent = this.player.end;
+    this.statElements.wis.textContent = this.player.wis;
+    this.statElements.soulPower.textContent = `${this.player.soulPower} (Neutral)`;
+    this.statElements.basedamage.textContent = this.player.baseDamage;
+
+    // Update enemy info
+    if (this.enemy) {
+      this.enemyNameEl.textContent = this.enemy.name;
+      this.enemyImageEl.src = this.enemy.imageSrc;
+      this.enemyImageEl.alt = this.enemy.name;
+      this.enemyInfoEl.hidden = false;
+    } else {
+      this.enemyInfoEl.hidden = true;
+    }
+  }
 
   showEnemyInStory() {
     if (this.enemy) {
@@ -102,7 +108,7 @@ updateStats() {
     this.storyTextEl.textContent = this.combatLog;
     this.storyTextEl.scrollTo({
       top: this.storyTextEl.scrollHeight,
-      behavior: 'smooth' // smooth scrolling
+      behavior: 'smooth'
     });
   }
 
@@ -115,5 +121,4 @@ updateStats() {
       window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerWon' }}));
     });
   }
-
 }

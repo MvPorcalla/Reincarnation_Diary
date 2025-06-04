@@ -22,7 +22,7 @@ export function setPlayerName(name) {
 export class Player {
   constructor(name = playerName) {
     this.name = name;
-    this.maxHealth = this.getRandomInt(80, 1120);
+    this.maxHealth = this.getRandomInt(80, 120);
     this.health = this.maxHealth;
     this.str = this.getRandomInt(5, 12);
     this.agi = this.getRandomInt(5, 12);

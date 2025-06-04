@@ -1,3 +1,4 @@
+// gameManager.js
 import { setPlayerName, Player } from './player.js';
 import { createEnemy } from './enemy.js';
 import { Combat } from './combat.js';
@@ -29,7 +30,7 @@ let combat = null;
 const ui = new UI(player, null);
 
 function goToScene(sceneName, params = {}) {
-  story.setScene(sceneName, player);
+  story.setScene(sceneName, player, params);
 
   const scene = story.getScene(sceneName);
 
@@ -82,13 +83,14 @@ function renderScene() {
     ui.enemy = null;
     for (const choice of scene.choices) {
       ui.createChoiceButton(choice.text, () => {
-        goToScene(choice.nextScene);
+        goToScene(choice.nextScene, choice.params || {});
       });
     }
   }
 
   ui.updateStats();
 }
+
 
 function gameOver() {
   ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";

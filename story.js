@@ -1,6 +1,6 @@
 // story.js
-import { enemyTiers } from './enemy.js';
-import { createScene, recoverHealth, getRandomElement } from './utils.js';
+import { getRandomEnemy } from './enemy.js';
+import { createScene, recoverHealth } from './utils.js';
 
 export const story = {
   currentScene: 'start',
@@ -18,7 +18,6 @@ export const story = {
       text: "You take a moment to rest.",
       choices: [],
       onEnter(player, params) {
-        // 50% chance to recover health, else encounter enemy
         const chance = Math.random();
         if (chance < 0.5) {
           recoverHealth(player, 10);
@@ -26,7 +25,7 @@ export const story = {
           this.choices = [{ text: "Continue walking", nextScene: 'walkForwardEncounter' }];
         } else {
           this.text = "As you rest, an enemy approaches!";
-          this.choices = [{ text: "Prepare to fight", nextScene: 'randomEncounterFight', params: { tier: 1 } }];
+          this.choices = [{ text: "Prepare to fight", nextScene: 'randomEncounterFight', params: { tier: 2 } }];
         }
       }
     }),
@@ -43,23 +42,20 @@ export const story = {
       text: "The battle begins!",
       choices: [],
       onEnter(player, params = {}) {
-        const tier = params.tier || 1; // Default to tier 1 if not specified
-        const enemies = enemyTiers[tier];
-        if (!enemies || enemies.length === 0) {
-          this.text = `No enemies found in Tier ${tier}.`;
+          console.log('Entering templeInnerFight with params:', params);
+        const tier = params.tier || 1;
+        try {
+          const enemy = getRandomEnemy(tier);
+          this.encounter = enemy;
+          player.currentEnemy = enemy;
+          player.nextAfterBattleScene = 'postFightChoice';
+
+          this.text = `You fight the wild ${enemy.name}!`;
+          this.choices = [];
+        } catch (error) {
+          this.text = error.message;
           this.choices = [{ text: "Go back", nextScene: 'start' }];
-          return;
         }
-
-        const enemy = getRandomElement(enemies);
-        this.encounter = enemy;
-
-        // Mark that player is in combat
-        player.currentEnemy = enemy;
-        player.nextAfterBattleScene = 'postFightChoice'; // where to go after combat
-
-        this.text = `You fight the wild ${enemy.name}!`;
-        this.choices = [];
       }
     }),
 
@@ -105,7 +101,7 @@ export const story = {
     templeEntrance: createScene({
       text: "You cautiously enter the temple. Suddenly, a guardian appears!",
       choices: [
-        { text: "Fight the temple guardian", nextScene: 'templeInnerFight', params: { tier: 2 } },
+        { text: "Fight the temple guardian", nextScene: 'templeInnerFight', params: { tier: 1 } },
         { text: "Run away", nextScene: 'gameOver' }
       ]
     }),
@@ -114,22 +110,22 @@ export const story = {
       text: "The temple guardian stands before you!",
       choices: [],
       onEnter(player, params = {}) {
-        const tier = params.tier || 2; // Default to tier 2 for temple guardian
-        const enemies = enemyTiers[tier];
-        if (!enemies || enemies.length === 0) {
-          this.text = `No enemies found in Tier ${tier}.`;
+          console.log('Entering templeInnerFight with params:', params);
+
+        const tier = params.tier || 1;
+        try {
+          const enemy = getRandomEnemy(tier);
+          this.encounter = enemy;
+
+          player.currentEnemy = enemy;
+          player.nextAfterBattleScene = 'templeVictory';
+
+          this.text = `You fight the temple guardian ${enemy.name}!`;
+          this.choices = [];
+        } catch (error) {
+          this.text = error.message;
           this.choices = [{ text: "Go back", nextScene: 'start' }];
-          return;
         }
-
-        const enemy = getRandomElement(enemies);
-        this.encounter = enemy;
-
-        player.currentEnemy = enemy;
-        player.nextAfterBattleScene = 'templeVictory';
-
-        this.text = `You fight the temple guardian ${enemy.name}!`;
-        this.choices = [];
       }
     }),
 
@@ -156,7 +152,6 @@ export const story = {
     return this.scenes[sceneName];
   },
 
-  // Accepts params object that can have any number of keys
   setScene(sceneName, player, params = {}) {
     this.currentScene = sceneName;
     const scene = this.getScene(sceneName);
@@ -168,7 +163,9 @@ export const story = {
 
 // Example of choice selection handler you can use with this system
 export function onChoiceSelected(choice, player) {
+  console.log('Choice selected:', choice);
   if (choice.params) {
+    console.log('Params:', choice.params);
     story.setScene(choice.nextScene, player, choice.params);
   } else {
     story.setScene(choice.nextScene, player);

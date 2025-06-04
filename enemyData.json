@@ -1,0 +1,51 @@
+{
+  "1": [
+    {
+      "name": "Goblin",
+      "maxHealth": 60,
+      "damage": 9,
+      "critChance": 0.1,
+      "tier": 1,
+      "agi": 8,
+      "imageSrc": "./assets/enemies/goblin-girl.png"
+    },
+    {
+      "name": "Slime",
+      "maxHealth": 50,
+      "damage": 5,
+      "critChance": 0.05,
+      "tier": 1,
+      "agi": 5,
+      "imageSrc": "./assets/enemies/slime-girl.png"
+    },
+    {
+      "name": "Wild Bat",
+      "maxHealth": 50,
+      "damage": 6,
+      "critChance": 0.05,
+      "tier": 1,
+      "agi": 10,
+      "imageSrc": "./assets/enemies/sampleasset.png"
+    }
+  ],
+  "2": [
+    {
+      "name": "Orc",
+      "maxHealth": 110,
+      "damage": 20,
+      "critChance": 0.15,
+      "tier": 2,
+      "agi": 7,
+      "imageSrc": "./assets/enemies/orc-girl.png"
+    },
+    {
+      "name": "Skeleton",
+      "maxHealth": 90,
+      "damage": 20,
+      "critChance": 0.12,
+      "tier": 2,
+      "agi": 6,
+      "imageSrc": "./assets/enemies/sampleasset.png"
+    }
+  ]
+}
