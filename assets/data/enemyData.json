@@ -7,7 +7,7 @@
       "critChance": 0.1,
       "tier": 1,
       "agi": 8,
-      "imageSrc": "./assets/enemies/goblin-girl.png"
+      "imageSrc": "./assets/images/enemies/goblin-girl.png"
     },
     {
       "name": "Slime",
@@ -16,7 +16,7 @@
       "critChance": 0.05,
       "tier": 1,
       "agi": 5,
-      "imageSrc": "./assets/enemies/slime-girl.png"
+      "imageSrc": "./assets/images/enemies/slime-girl.png"
     },
     {
       "name": "Wild Bat",
@@ -25,7 +25,7 @@
       "critChance": 0.05,
       "tier": 1,
       "agi": 10,
-      "imageSrc": "./assets/enemies/sampleasset.png"
+      "imageSrc": "./assets/images/sampleasset.png"
     }
   ],
   "2": [
@@ -36,7 +36,7 @@
       "critChance": 0.15,
       "tier": 2,
       "agi": 7,
-      "imageSrc": "./assets/enemies/orc-girl.png"
+      "imageSrc": "./assets/images/enemies/orc-girl.png"
     },
     {
       "name": "Skeleton",
@@ -45,7 +45,7 @@
       "critChance": 0.12,
       "tier": 2,
       "agi": 6,
-      "imageSrc": "./assets/enemies/sampleasset.png"
+      "imageSrc": "./assets/images/sampleasset.png"
     }
   ]
 }

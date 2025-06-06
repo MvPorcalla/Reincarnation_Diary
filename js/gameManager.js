@@ -29,18 +29,23 @@ let combat = null;
 
 const ui = new UI(player, null);
 
-function goToScene(sceneName, params = {}) {
-  story.setScene(sceneName, player, params);
-
+// Change goToScene to async
+async function goToScene(sceneName, params = {}) {
+  story.currentScene = sceneName;  // set currentScene first
   const scene = story.getScene(sceneName);
 
-  // Trigger onEnter if exists
+  // Await onEnter if it exists and is async
   if (scene.onEnter) {
-    scene.onEnter(player, params);
+    // Check if onEnter returns a Promise (is async)
+    const result = scene.onEnter(player, params);
+    if (result instanceof Promise) {
+      await result;
+    }
   }
 
   renderScene();
 }
+
 
 function renderScene() {
   const scene = story.getScene(story.currentScene);
@@ -49,17 +54,8 @@ function renderScene() {
   ui.storyTextEl.textContent = scene.text;
   ui.clearChoices();
 
-  // Combat scene
   if (scene.encounter) {
-    currentEnemy = createEnemy({
-      name: scene.encounter.name,
-      maxHealth: scene.encounter.maxHealth,
-      damage: scene.encounter.damage,
-      critChance: scene.encounter.critChance,
-      tier: scene.encounter.tier,
-      agi: scene.encounter.agi,
-      imageSrc: scene.encounter.imageSrc
-    });
+    currentEnemy = scene.encounter;  // enemy already created by story onEnter
 
     combat = new Combat(player, currentEnemy, ui);
     ui.enemy = currentEnemy;
@@ -67,11 +63,9 @@ function renderScene() {
 
     ui.showEnemyInStory();
 
-    // Add attack button
     ui.createChoiceButton('Attack', () => {
       combat.playerAttack();
 
-      // Check if player is defeated right after attack
       if (player.health <= 0) {
         gameOver();
       }
@@ -90,6 +84,7 @@ function renderScene() {
 
   ui.updateStats();
 }
+
 
 
 function gameOver() {
@@ -134,4 +129,8 @@ window.addEventListener('combatEnded', (e) => {
 });
 
 // Start the game at the initial scene
-goToScene('start');
+// goToScene('start');
+(async () => {
+  await goToScene('start');
+})();
+

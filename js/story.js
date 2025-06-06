@@ -39,25 +39,26 @@ export const story = {
     }),
 
     randomEncounterFight: createScene({
-      text: "The battle begins!",
-      choices: [],
-      onEnter(player, params = {}) {
-          console.log('Entering templeInnerFight with params:', params);
-        const tier = params.tier || 1;
-        try {
-          const enemy = getRandomEnemy(tier);
-          this.encounter = enemy;
-          player.currentEnemy = enemy;
-          player.nextAfterBattleScene = 'postFightChoice';
+  text: "The battle begins!",
+  choices: [],
+  async onEnter(player, params = {}) {   // <-- make async
+    console.log('Entering randomEncounterFight with params:', params);
+    const tier = params.tier || 1;
+    try {
+      const enemy = await getRandomEnemy(tier);   // <-- await here
+      this.encounter = enemy;
+      player.currentEnemy = enemy;
+      player.nextAfterBattleScene = 'postFightChoice';
 
-          this.text = `You fight the wild ${enemy.name}!`;
-          this.choices = [];
-        } catch (error) {
-          this.text = error.message;
-          this.choices = [{ text: "Go back", nextScene: 'start' }];
-        }
-      }
-    }),
+      this.text = `You fight the wild ${enemy.name}!`;
+      this.choices = [];
+    } catch (error) {
+      this.text = error.message;
+      this.choices = [{ text: "Go back", nextScene: 'start' }];
+    }
+  }
+}),
+
 
     postFightChoice: createScene({
       text: "You defeated the enemy! What do you want to do?",
@@ -107,27 +108,28 @@ export const story = {
     }),
 
     templeInnerFight: createScene({
-      text: "The temple guardian stands before you!",
-      choices: [],
-      onEnter(player, params = {}) {
-          console.log('Entering templeInnerFight with params:', params);
+  text: "The temple guardian stands before you!",
+  choices: [],
+  async onEnter(player, params = {}) {
+    console.log('Entering templeInnerFight with params:', params);
 
-        const tier = params.tier || 1;
-        try {
-          const enemy = getRandomEnemy(tier);
-          this.encounter = enemy;
+    const tier = params.tier || 1;
+    try {
+      const enemy = await getRandomEnemy(tier);
+      this.encounter = enemy;
 
-          player.currentEnemy = enemy;
-          player.nextAfterBattleScene = 'templeVictory';
+      player.currentEnemy = enemy;
+      player.nextAfterBattleScene = 'templeVictory';
 
-          this.text = `You fight the temple guardian ${enemy.name}!`;
-          this.choices = [];
-        } catch (error) {
-          this.text = error.message;
-          this.choices = [{ text: "Go back", nextScene: 'start' }];
-        }
-      }
-    }),
+      this.text = `You fight the temple guardian ${enemy.name}!`;
+      this.choices = [];
+    } catch (error) {
+      this.text = error.message;
+      this.choices = [{ text: "Go back", nextScene: 'start' }];
+    }
+  }
+}),
+
 
     templeVictory: createScene({
       text: "You defeated the guardian and retrieve an ancient sword!",
