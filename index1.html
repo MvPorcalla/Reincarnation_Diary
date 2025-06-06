@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
+  <title>Reincarnation RPG</title>
+  <link rel="stylesheet" href="./css/uiStyle.css">
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+ body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 1rem;
+      text-align: center;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      z-index: 1; /* put content above background */
+    }
+
+
+    .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('./assets/images/background/bg2.png'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    filter: brightness(0.5);
+    }
+
+
+    h1 {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 3.5rem;
+      color: #f5f5f5;
+      text-shadow: 2px 2px #000;
+      margin-bottom: 2rem;
+    }
+
+    .content {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .story-box {
+      background-color: transparent;
+      border: 1px solid #333;
+      padding: 1.5rem 2rem;
+      border-radius: 10px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    }
+
+    .start-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem; /* reduced from 2rem */
+    margin-bottom: 5rem; /* added to lift it up from the bottom */
+    }
+
+    .menu-button {
+        font-family: 'UnifrakturCook', cursive;
+        font-size: 1.2rem;
+        padding: 0.8rem 3rem;
+        color: #5a4a2a;
+        background: #e4d7af;
+        border: 2px solid #7b6a3e;
+        border-radius: 5px;
+        box-shadow:
+            inset 0 0 15px 5px #c8b87a,
+            inset 5px 5px 15px 2px #a3915e,
+            0 4px 6px rgba(0, 0, 0, 0.5);
+        text-shadow: 1px 1px 0 #c6b974;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        clip-path: polygon(
+            5% 0%, 95% 0%, 100% 5%, 100% 20%, 95% 25%, 100% 30%, 
+            100% 70%, 95% 75%, 100% 80%, 100% 95%, 95% 100%, 5% 100%, 
+            0% 95%, 0% 80%, 5% 75%, 0% 70%, 0% 30%, 5% 25%, 0% 20%, 0% 5%
+        );
+    }
+    .menu-button:hover {
+        background-color: #e0e0e0;
+        box-shadow:
+            inset 0 0 20px 7px #d6ca8f,
+            inset 6px 6px 20px 3px #b6a662,
+            0 6px 10px rgba(0,0,0,0.6);
+        color: #111;
+        transform: scale(1.05);
+    }
+
+
+/* ================================================ FireFlies ================================================ */
+    /* Fireflies container */
+    .fireflies {
+    pointer-events: none; /* so clicks pass through */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: visible;
+    z-index: 0; /* behind content but above background */
+    }
+
+    .firefly {
+    position: absolute;
+    width: 6px;   /* can be overridden inline */
+    height: 6px;  /* can be overridden inline */
+    background: radial-gradient(circle, 
+        #ffffff 0%,      
+        #fff9b0 30%,     
+        #ffcc4d 55%,     
+        #ff7f2a 80%,     
+        #d93600 100%     
+    );
+    border-radius: 50%;
+    opacity: 0.9;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    filter:
+        drop-shadow(0 0 8px #fff7b2)
+        drop-shadow(0 0 10px #ffcc4d)
+        drop-shadow(0 0 14px #ff7f2a)
+        drop-shadow(0 0 18px #d93600);
+    animation-fill-mode: forwards;
+    }
+
+    @keyframes float1 {
+    0%   { transform: translate(0, 0) scale(1); }
+    25%  { transform: translate(10px, -5px) scale(1.2); }
+    50%  { transform: translate(-10px, 5px) scale(0.8); }
+    75%  { transform: translate(5px, 10px) scale(1.1); }
+    100% { transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes float2 {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.85;
+    }
+    50% {
+        transform: translate(-8px, 10px) scale(0.9);
+        opacity: 0.5;
+    }
+    }
+
+    @keyframes float3 {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+        filter: drop-shadow(0 0 5px #ff7f2a);
+    }
+    25% {
+        transform: translate(12px, -12px) scale(1.2);
+        opacity: 1;
+        filter: drop-shadow(0 0 14px #ff9c42);
+    }
+    50% {
+        transform: translate(-12px, 12px) scale(0.85);
+        opacity: 0.7;
+        filter: drop-shadow(0 0 6px #ff7f2a);
+    }
+    75% {
+        transform: translate(8px, 8px) scale(1.1);
+        opacity: 0.9;
+        filter: drop-shadow(0 0 12px #ff9c42);
+    }
+    }
+
+/* ================================================ FireFlies ================================================ */
+
+/* Modal styles */
+  .modal {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    z-index: 10; /* Above everything */
+    left: 0;
+    top: 0;
+    width: 100vw; 
+    height: 100vh;
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.7); /* Dark overlay */
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-content {
+    background-color: #292929;
+    margin: 15% auto; /* center vertically and horizontally */
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 0 15px #ff7f2a;
+  }
+
+  .modal-content h2 {
+    font-family: 'UnifrakturCook', cursive;
+    margin-bottom: 1rem;
+    color: #ff7f2a;
+  }
+
+  .modal-content p {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+    
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      .story-box {
+        padding: 1rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+    
+  </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div id="firefly-container" class="fireflies"></div>
+
+
+  <h1>Reincarnator</h1>
+
+  <div class="content">
+    <div class="story-box">
+      <p>You awaken in a void beyond time.</p>
+      <p>A voice whispers: <em>"Your journey begins again."</em></p>
+    </div>
+  </div>
+
+  <div class="start-button-container">
+<button id="startGameBtn" class="menu-button" onclick="startGame()">Start Game</button>
+  </div>
+  
+  <div id="reincarnationModal" class="modal">
+  <div class="modal-content">
+    <h2>Reincarnation Count</h2>
+    <p>You have reincarnated <span id="reincarnationCount">3</span> times.</p>
+    <button id="generateCustomBtn" class="menu-button">Custom body</button>
+    <button id="generateRandomBtn" class="menu-button">Generate Random Body</button>
+
+    <button id="closeModalBtn" class="menu-button" style="margin-left:10px;">Close</button>
+  </div>
+</div>
+
+  <script>
+    const modal = document.getElementById('reincarnationModal');
+    const reincarnationCountEl = document.getElementById('reincarnationCount');
+    const generateBtn = document.getElementById('generateRandomBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    // Initial reincarnation count sample data
+    let reincarnationCount = 3;
+
+    function startGame() {
+        // Show modal instead of alert
+        reincarnationCountEl.textContent = reincarnationCount;
+        modal.style.display = 'block';
+    }
+
+    // Generate random reincarnation count between 1 and 10
+    generateBtn.onclick = () => {
+        reincarnationCount = Math.floor(Math.random() * 10) + 1;
+        reincarnationCountEl.textContent = reincarnationCount;
+    };
+
+    // Close modal
+    closeModalBtn.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    // Optional: Close modal if clicking outside modal content
+    window.onclick = (event) => {
+        if (event.target === modal) {
+        modal.style.display = 'none';
+        }
+    };
+
+
+    // Firefly animation setup
+
+    const container = document.getElementById('firefly-container');
+    const quantity = window.innerWidth < 600 ? 8 : 15;  // change this number to how many fireflies you want
+
+    for (let i = 0; i < quantity; i++) {
+    const firefly = document.createElement('div');
+    firefly.classList.add('firefly');
+    
+    // Random size between 3px and 7px
+    const size = Math.random() * 4 + 3;
+    firefly.style.width = `${size}px`;
+    firefly.style.height = `${size}px`;
+
+    // Random position anywhere in viewport (percentages)
+    firefly.style.top = `${Math.random() * 90 + 5}%`;
+    firefly.style.left = `${Math.random() * 90 + 5}%`;
+
+    // Pick a random animation from float1, float2, float3
+    const animations = ['float1', 'float2', 'float3'];
+    const chosenAnim = animations[Math.floor(Math.random() * animations.length)];
+    firefly.style.animationName = chosenAnim;
+
+    // Random animation duration between 5s and 10s
+    firefly.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+    // Random animation delay up to 5s for stagger
+    firefly.style.animationDelay = `${Math.random() * 5}s`;
+
+    container.appendChild(firefly);
+    }
+
+
+    function startGame() {
+    // Show modal instead of alert
+    reincarnationCountEl.textContent = reincarnationCount;
+    modal.style.display = 'block';
+}
+
+
+  </script>
+</body>
+</html>
