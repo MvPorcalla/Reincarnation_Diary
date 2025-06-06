@@ -15,8 +15,10 @@ export let playerName = getRandomName();
 
 // A function to update the playerName variable
 export function setPlayerName(name) {
-  playerName = name || getRandomName();  // If empty or null, generate random name
+  // Ensure name is not null/undefined, and slice to max 12 characters
+  playerName = (name || getRandomName()).slice(0, 16);
 }
+ 
 
 // Player class uses the global playerName variable by default
 export class Player {
