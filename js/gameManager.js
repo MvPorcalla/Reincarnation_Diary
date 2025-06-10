@@ -14,14 +14,15 @@ if (isDev) {
 }
 // ============================= Debugging and Validation =============================
 
+// ============================= This is important dont remove =============================
 // Function to ask for player name (can replace prompt with UI later)
-function askForPlayerName() {
-  const name = prompt("Enter your player name (leave blank for random):");
-  setPlayerName(name);
-}
-
+// function askForPlayerName() {
+//   const name = prompt("Enter your player name (leave blank for random):");
+//   setPlayerName(name);
+// }
 // Ask for player name before creating player
-askForPlayerName();
+// askForPlayerName();
+// ============================= This is important dont remove =============================
 
 let player = new Player();  // Uses the updated playerName from player.js
 let currentEnemy = null;

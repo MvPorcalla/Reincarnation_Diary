@@ -148,6 +148,10 @@ export const story = {
       text: "Your adventure ends here. Thanks for playing!",
       choices: [{ text: "Restart Game", nextScene: 'start' }]
     })
+    //  gameOver: createScene({
+    //   text: "Your adventure ends here. Thanks for playing!",
+    //   choices: [{ text: "View Summary & Return", nextScene: 'redirectToSummary' }] // CHANGED THIS LINE
+    // })
   },
 
   getScene(sceneName) {
@@ -173,3 +177,38 @@ export function onChoiceSelected(choice, player) {
     story.setScene(choice.nextScene, player);
   }
 }
+
+
+// export function onChoiceSelected(choice, player) {
+//     console.log('Choice selected:', choice);
+
+//     // --- NEW LOGIC HERE for Redirecting to Summary Page ---
+//     if (choice.nextScene === 'redirectToSummary') {
+//         console.log("Game completed. Preparing summary and redirecting.");
+
+//         // IMPORTANT: Save data to localStorage before redirecting
+//         // Example: Save player's current gold
+//         localStorage.setItem('lastGameGold', player.gold || 0);
+
+//         // You might want to calculate a score based on game state here
+//         let finalScore = (player.gold || 0) + (player.hasSword ? 100 : 0); // Example score calculation
+//         localStorage.setItem('lastGameScore', finalScore);
+
+//         // Clear any in-game temporary state that shouldn't persist
+//         // delete player.gold;
+//         // delete player.hasSword;
+//         // etc. (Do this carefully, or just let the new page load reset JS state)
+
+
+//         window.location.href = 'gameOverScreen.html'; // Redirect to your new summary page
+//         return; // Stop further scene processing
+//     }
+//     // --- END NEW LOGIC ---
+
+//     if (choice.params) {
+//         console.log('Params:', choice.params);
+//         story.setScene(choice.nextScene, player, choice.params);
+//     } else {
+//         story.setScene(choice.nextScene, player);
+//     }
+// }
