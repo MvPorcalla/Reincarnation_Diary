@@ -200,7 +200,7 @@ export function onChoiceSelected(choice, player) {
 //         // etc. (Do this carefully, or just let the new page load reset JS state)
 
 
-//         window.location.href = 'gameOverScreen.html'; // Redirect to your new summary page
+//         window.location.href = 'endScreen.html'; // Redirect to your new summary page
 //         return; // Stop further scene processing
 //     }
 //     // --- END NEW LOGIC ---
