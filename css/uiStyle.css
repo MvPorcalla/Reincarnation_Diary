@@ -1,5 +1,8 @@
-/* uistyle.css */
+/* --------------------------------------------------
+  UI Style Sheet for Reincarnator Diary
+-------------------------------------------------- */
 
+/* SCROLLBAR STYLING */
 #story-text::-webkit-scrollbar {
   width: 8px;
 }
@@ -8,15 +11,14 @@
   border-radius: 4px;
 }
 
-
-/* Reset */
+/* RESET */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Base styles */
+/* BASE BODY STYLES */
 body {
   background-color: #121212;
   color: #eee;
@@ -27,6 +29,7 @@ body {
   justify-content: center;
 }
 
+/* WRAPPER */
 #game-wrapper {
   background-color: #222;
   border: 3px solid #555;
@@ -45,7 +48,9 @@ body {
   overflow: hidden;
 }
 
-/* Stats Panel */
+/* --------------------------------------------------
+  STATS PANEL
+-------------------------------------------------- */
 #stats-panel {
   width: 30%;
   background-color: #111;
@@ -68,7 +73,6 @@ body {
 #player-profile {
   display: flex;
   align-items: center;
-  /* margin-bottom: 25px; */
   padding-bottom: 15px;
   border-bottom: 2px solid #444;
 }
@@ -91,13 +95,20 @@ body {
   font-size: 16px;
 }
 
-#player-name {
+.player-name {
   font-size: 20px;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   user-select: text;
 }
 
-/* Stat Bars */
+/* Stat Elements */
+.stat {
+  background-color: #333;
+  padding: 10px 15px;
+  border-radius: 6px;
+  text-align: center;
+}
+
 .stat-bar {
   display: flex;
   align-items: center;
@@ -105,16 +116,28 @@ body {
   margin-bottom: 5px;
 }
 
+.soul-power {
+  color: #f1c40f;
+  font-weight: bold;
+}
+
+.check {
+  background-color: green;
+}
+
+/* --------------------------------------------------
+  HEALTH BARS
+-------------------------------------------------- */
 #player-health {
-  background-color: #1b3e1b;  /* dark green background */
-  border-color: #2e8b57;      /* medium green border */
-  color: #4caf50;             /* lighter green for the fill via .bar-fill */
+  background-color: #1b3e1b;
+  border-color: #2e8b57;
+  color: #4caf50;
 }
 
 #enemy-health {
   background-color: #330000;
   border-color: #990000;
-  color: #e74c3c; /* red fill */
+  color: #e74c3c;
 }
 
 .bar {
@@ -123,80 +146,102 @@ body {
   border: 1px solid #000;
   transition: width 0.3s ease;
 }
+
 .bar-fill {
   height: 100%;
   width: 100%;
-  background-color: currentColor;  /* uses color from parent (.bar) */
-  transition: width 0.3s ease;
+  background-color: currentColor;
   border-radius: 2px;
+  transition: width 0.3s ease;
 }
+
 .bar.sanity {
   background-color: blue;
 }
 
-/* Stat Values */
-.stat {
-  background-color: #333;
-  padding: 10px 15px;
-  border-radius: 6px;
-  text-align: center;
-}
-.soul-power {
-  color: #f1c40f;
-  font-weight: bold;
+/* Crit & Dodge Effects */
+#player-health.flash-crit,
+#enemy-health.flash-crit {
+  background-color: rgba(255, 0, 0, 0.5) !important;
+  transition: background-color 0.3s ease;
 }
 
-/* Inventory */
+#player-health.flash-dodge,
+#enemy-health.flash-dodge {
+  background-color: rgba(0, 200, 255, 0.5) !important;
+  transition: background-color 0.3s ease;
+}
+
+/* Hearts */
+.hearts-container {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.heart {
+  color: red;
+  transition: transform 0.2s ease;
+}
+
+.heart.lost {
+  color: gray;
+  transform: scale(0.8);
+}
+
+/* --------------------------------------------------
+  INVENTORY GRID
+-------------------------------------------------- */
 .inventory-grid {
   display: grid;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
+
 .equipped-grid {
   grid-template-columns: repeat(5, 60px);
 }
+
 .general-grid {
   grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
 }
 
-/* Main UI */
+/* --------------------------------------------------
+  MAIN UI / STORY SECTION
+-------------------------------------------------- */
 #main-ui {
   width: 70%;
-  padding:10px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
   height: 100%;
   max-height: 95vh;
-  min-height: 0; 
+  min-height: 0;
   overflow: hidden;
 }
 
-/* Make story text take available vertical space */
 #story-text {
-  flex: 7; /* 80% of the height */
+  flex: 7;
   font-size: 18px;
   line-height: 1.4;
   white-space: pre-wrap;
   overflow-y: auto;
   user-select: text;
-  padding-right: 5px;
-  padding-bottom: 20px;
-  padding-top: 20px;
+  padding: 10px 5px;
   border-bottom: 1px solid #666;
 }
 
 #choices-container {
-  flex: 3; /* 20% of the height */
+  flex: 3;
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
   gap: 10px;
   padding-top: 20px;
-  overflow-y: auto; /* Optional: scroll if too many buttons */
-
+  overflow-y: auto;
 }
 
-/* Style for the choice buttons */
 #choices-container button {
   padding: 14px 20px;
   background-color: #444;
@@ -216,21 +261,33 @@ body {
   outline: none;
 }
 
-
-/* Highlight when a dodge occurs */
-#player-health.flash-crit, #enemy-health.flash-crit {
-  background-color: rgba(255, 0, 0, 0.5) !important;
-  transition: background-color 0.3s ease;
+/* Enemy Info */
+#enemy-info {
+  margin-bottom: 10px;
 }
 
-/* Highlight when a critical hit occurs */
-#player-health.flash-dodge, #enemy-health.flash-dodge {
-  background-color: rgba(0, 200, 255, 0.5) !important; 
-  transition: background-color 0.3s ease;
+#enemy-name {
+  font-size: 20px;
+  margin-bottom: 5px;
+  user-select: text;
+}
+
+#enemy-image {
+  display: block;
+  max-width: 150px;
+  margin: 10px auto 0 auto;
+}
+
+.combat-area {
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 
-/* Responsive Layout */
+/* --------------------------------------------------
+  RESPONSIVE LAYOUT
+-------------------------------------------------- */
 @media (max-width: 720px) {
   #content-container {
     flex-direction: column;

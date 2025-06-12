@@ -8,7 +8,7 @@ export class UI {
     this.storyTextEl = document.getElementById('story-text');
     this.choicesContainer = document.getElementById('choices-container');
 
-    this.playerNameEl = document.getElementById('player-name');
+    // this.playerNameEl = document.getElementById('player-name');
 
     this.enemyInfoEl = document.getElementById('enemy-info');
     this.enemyNameEl = document.getElementById('enemy-name');
@@ -66,7 +66,10 @@ export class UI {
   }
 
   updateStats() {
-    this.playerNameEl.textContent = this.player.name;
+    document.querySelectorAll('.player-name').forEach(el => {
+  el.textContent = this.player.name;
+});
+
 
     // Update health bars via new method
     this.updateHealthBars();

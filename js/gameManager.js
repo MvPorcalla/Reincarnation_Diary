@@ -78,21 +78,31 @@ function renderScene() {
     ui.enemy = null;
     for (const choice of scene.choices) {
       ui.createChoiceButton(choice.text, () => {
+      if (choice.redirectTo) {
+        window.location.href = choice.redirectTo;
+        return;
+      }
+
+      if (choice.nextScene) {
         goToScene(choice.nextScene, choice.params || {});
-      });
+      } else {
+        console.error("No nextScene or redirectTo specified in choice:", choice);
+      }
+    });
+
     }
   }
 
   ui.updateStats();
 }
 
-function gameOver() {
-  ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
-  ui.clearChoices();
-  ui.createChoiceButton('Restart', () => {
-    resetGame();
-  });
-}
+// function gameOver() {
+//   ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
+//   ui.clearChoices();
+//   ui.createChoiceButton('Restart', () => {
+//     resetGame();
+//   });
+// }
 
 function resetGame() {
   player.reset(); // Reset stats, lives, etc.

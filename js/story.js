@@ -11,8 +11,12 @@ export const story = {
       choices: [
         { text: "Walk forward", nextScene: 'walkForwardEncounter' },
         { text: "Rest", nextScene: 'rest' },
-      ]
+      ],
+      onEnter(player) {
+        player.reset();  // reset here to start fresh
+      }
     }),
+
 
     rest: createScene({
       text: "You take a moment to rest.",
@@ -146,12 +150,16 @@ export const story = {
 
     gameOver: createScene({
       text: "Your adventure ends here. Thanks for playing!",
-      choices: [{ text: "Restart Game", nextScene: 'start' }]
+      choices: [
+        {
+          text: "Summary",
+          redirectTo: "./endScreen.html" // Instead of nextScene
+        }
+      ]
+
+
     })
-    //  gameOver: createScene({
-    //   text: "Your adventure ends here. Thanks for playing!",
-    //   choices: [{ text: "View Summary & Return", nextScene: 'redirectToSummary' }] // CHANGED THIS LINE
-    // })
+
   },
 
   getScene(sceneName) {
@@ -170,45 +178,14 @@ export const story = {
 // Example of choice selection handler you can use with this system
 export function onChoiceSelected(choice, player) {
   console.log('Choice selected:', choice);
+  if (choice.redirectTo) {
+    window.location.href = choice.redirectTo;  // Redirect to your endscreen.html
+    return;  // stop further processing
+  }
+  
   if (choice.params) {
-    console.log('Params:', choice.params);
     story.setScene(choice.nextScene, player, choice.params);
-  } else {
+  } else if (choice.nextScene) {
     story.setScene(choice.nextScene, player);
   }
 }
-
-
-// export function onChoiceSelected(choice, player) {
-//     console.log('Choice selected:', choice);
-
-//     // --- NEW LOGIC HERE for Redirecting to Summary Page ---
-//     if (choice.nextScene === 'redirectToSummary') {
-//         console.log("Game completed. Preparing summary and redirecting.");
-
-//         // IMPORTANT: Save data to localStorage before redirecting
-//         // Example: Save player's current gold
-//         localStorage.setItem('lastGameGold', player.gold || 0);
-
-//         // You might want to calculate a score based on game state here
-//         let finalScore = (player.gold || 0) + (player.hasSword ? 100 : 0); // Example score calculation
-//         localStorage.setItem('lastGameScore', finalScore);
-
-//         // Clear any in-game temporary state that shouldn't persist
-//         // delete player.gold;
-//         // delete player.hasSword;
-//         // etc. (Do this carefully, or just let the new page load reset JS state)
-
-
-//         window.location.href = 'endScreen.html'; // Redirect to your new summary page
-//         return; // Stop further scene processing
-//     }
-//     // --- END NEW LOGIC ---
-
-//     if (choice.params) {
-//         console.log('Params:', choice.params);
-//         story.setScene(choice.nextScene, player, choice.params);
-//     } else {
-//         story.setScene(choice.nextScene, player);
-//     }
-// }
