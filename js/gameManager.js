@@ -47,7 +47,6 @@ async function goToScene(sceneName, params = {}) {
   renderScene();
 }
 
-
 function renderScene() {
   const scene = story.getScene(story.currentScene);
 
@@ -57,6 +56,7 @@ function renderScene() {
 
   if (scene.encounter) {
     currentEnemy = scene.encounter;  // enemy already created by story onEnter
+    player.resetCombatHealth();  // Reset combat HP before new fight
 
     combat = new Combat(player, currentEnemy, ui);
     ui.enemy = currentEnemy;
@@ -86,8 +86,6 @@ function renderScene() {
   ui.updateStats();
 }
 
-
-
 function gameOver() {
   ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
   ui.clearChoices();
@@ -97,40 +95,53 @@ function gameOver() {
 }
 
 function resetGame() {
-  askForPlayerName();  // Ask for player name again on restart
-  player = new Player();
-  ui.player = player;
-  ui.enemy = null;
-
-  story.setScene('start', player);
+  player.reset(); // Reset stats, lives, etc.
+  story.setScene("start", player);
   renderScene();
-  ui.updateStats();
 }
 
 // Handle combat end event
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
 
-  if (detail.result === 'playerDefeated') {
-    gameOver();
+  if (detail.result === 'gameOver') {
+    ui.storyTextEl.textContent = "💀 Game Over! You have no lives left.";
+    ui.clearChoices();
+    ui.createChoiceButton('Restart', () => {
+      resetGame();
+    });
     return;
   }
 
-  // Player won
-  const nextScene = player.nextAfterBattleScene || 'start';
-  story.setScene(nextScene, player);
+  // Player defeated but still has lives
+  if (detail.result === 'playerDefeated') {
+    const nextScene = player.nextAfterBattleScene || 'start';
+    story.setScene(nextScene, player);
 
-  // Show Continue button
-  ui.clearChoices();
-  ui.createChoiceButton('Continue', () => {
-    renderScene();
-  });
+    ui.clearChoices();
+    ui.createChoiceButton('Continue', () => {
+      renderScene();
+    });
 
-  ui.updateStats();
+    ui.updateStats();
+    return;
+  }
+
+  // Enemy defeated
+  if (detail.result === 'enemyDefeated') {
+    const nextScene = player.nextAfterBattleScene || 'start';
+    story.setScene(nextScene, player);
+
+    ui.clearChoices();
+    ui.createChoiceButton('Continue', () => {
+      renderScene();
+    });
+
+    ui.updateStats();
+  }
 });
 
-// Start the game at the initial scene
-// goToScene('start');
+// ============================= Game Initialization =============================
 (async () => {
   await goToScene('start');
 })();

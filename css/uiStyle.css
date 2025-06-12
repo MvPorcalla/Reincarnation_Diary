@@ -1,4 +1,14 @@
 /* uistyle.css */
+
+#story-text::-webkit-scrollbar {
+  width: 8px;
+}
+#story-text::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}
+
+
 /* Reset */
 * {
   box-sizing: border-box;

@@ -15,6 +15,7 @@ export class UI {
     this.enemyHealthBar = document.getElementById('enemy-health');
     this.enemyImageEl = document.getElementById('enemy-image');
 
+    this.livesContainer = document.getElementById('lives-container');
     this.playerHealthBar = document.getElementById('player-health');
 
     // Player stat elements
@@ -51,6 +52,16 @@ export class UI {
       const enemyHealthPercent = (this.enemy.health / this.enemy.maxHealth) * 100;
       this.enemyHealthBar.style.width = `${enemyHealthPercent}%`;
       this.enemyHealthBar.textContent = `${this.enemy.health} / ${this.enemy.maxHealth}`;
+    }
+
+    // Main health (hearts)
+    if (this.livesContainer) {
+      this.livesContainer.innerHTML = '';
+      for (let i = 0; i < this.player.maxLives; i++) {
+        const heart = document.createElement('span');
+        heart.textContent = i < this.player.lives ? '❤️' : '🤍';
+        this.livesContainer.appendChild(heart);
+      }
     }
   }
 

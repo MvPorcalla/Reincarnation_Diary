@@ -1,52 +1,74 @@
-// combat.js
 export class Combat {
   constructor(player, enemy, ui) {
     this.player = player;
     this.enemy = enemy;
-    this.ui = ui; // Object with logCombat(message), flashEffect(element, className), updateStats()
-    this.turn = null; // Current turn: 'player' or 'enemy'
+    this.ui = ui; // Expected methods: logCombat, flashEffect, updateStats
+    this.turn = null;
   }
 
-  // Determine who goes first based on agility + random roll
   determineTurnOrder() {
-    const playerAgility = Number(this.player.agi) || 0;
-    const enemyAgility = Number(this.enemy.agi) || 0;
+    const playerRoll = (Number(this.player.agi) || 0) + Math.floor(Math.random() * 20) + 1;
+    const enemyRoll = (Number(this.enemy.agi) || 0) + Math.floor(Math.random() * 20) + 1;
 
-    const playerInitiative = playerAgility + Math.floor(Math.random() * 20) + 1;
-    const enemyInitiative = enemyAgility + Math.floor(Math.random() * 20) + 1;
+    this.ui.logCombat(`Player initiative roll: ${playerRoll}`);
+    this.ui.logCombat(`Enemy initiative roll: ${enemyRoll}`);
 
-    this.ui.logCombat(`Player initiative roll: ${playerInitiative}`);
-    this.ui.logCombat(`Enemy initiative roll: ${enemyInitiative}`);
-
-    if (playerInitiative > enemyInitiative) return 'player';
-    if (enemyInitiative > playerInitiative) return 'enemy';
-
-    // Tie-breaker random
+    if (playerRoll > enemyRoll) return 'player';
+    if (enemyRoll > playerRoll) return 'enemy';
     return Math.random() < 0.5 ? 'player' : 'enemy';
+  }
+
+  handleAttack({ attacker, defender, defenderBar, isPlayer }) {
+    const { damage, isCrit } = attacker.attack();
+    const dodged = defender.takeDamage(damage);
+    const damageDealt = dodged ? 0 : damage;
+
+    // Build status tags
+    const tags = [];
+    if (dodged) {
+      tags.push('Dodged!');
+    } else if (isCrit) {
+      tags.push('Critical!');
+    }
+
+    const statusText = tags.length ? ` (${tags.join(' ')})` : '';
+    let message = '';
+
+    if (isPlayer) {
+      message = dodged
+        ? `> You attacked ${defender.name} but missed!`
+        : `> You attacked ${defender.name} for ${damageDealt} damage${statusText}`;
+    } else {
+      message = dodged
+        ? `> ${attacker.name} attacked and missed!`
+        : `> ${attacker.name} attacked you for ${damageDealt} damage${statusText}`;
+    }
+
+    this.ui.logCombat(message);
+
+    // Flash effect
+    if (dodged) {
+      this.ui.flashEffect(defenderBar, 'flash-dodge');
+    } else if (isCrit) {
+      this.ui.flashEffect(defenderBar, 'flash-crit');
+    }
+
+    this.checkCombatStatus();
+    return defender.isAlive();
   }
 
   playerAttack() {
     if (this.turn !== 'player') return;
 
-    const { damage, isCrit } = this.player.attack();
-    const dodged = this.enemy.takeDamage(damage);
+    const alive = this.handleAttack({
+      attacker: this.player,
+      defender: this.enemy,
+      defenderBar: this.ui.enemyHealthBar,
+      isPlayer: true
+    });
 
-    if (dodged) {
-      this.ui.logCombat(`${this.enemy.name} dodged the attack!`);
-      this.ui.flashEffect(this.ui.enemyHealthBar, 'flash-dodge'); // Flash on dodge
-    } else {
-      this.ui.logCombat(`${this.player.name} dealt ${damage} damage${isCrit ? ' (Critical!)' : ''} to ${this.enemy.name}.`);
-      if (isCrit) {
-        this.ui.flashEffect(this.ui.enemyHealthBar, 'flash-crit'); // Flash on crit
-      }
-    }
-
-    this.checkCombatStatus();
-
-    // Switch turn if combat still ongoing
-    if (this.enemy.isAlive()) {
+    if (alive) {
       this.turn = 'enemy';
-      // Enemy attacks after short delay
       setTimeout(() => this.enemyAttack(), 1000);
     }
   }
@@ -54,44 +76,40 @@ export class Combat {
   enemyAttack() {
     if (this.turn !== 'enemy') return;
 
-    const { damage, isCrit } = this.enemy.attack();
-    const dodged = this.player.takeDamage(damage);
+    const alive = this.handleAttack({
+      attacker: this.enemy,
+      defender: this.player,
+      defenderBar: this.ui.playerHealthBar,
+      isPlayer: false
+    });
 
-    const damageDealt = dodged ? 0 : damage;
-    const statusTags = [];
-
-    if (isCrit) statusTags.push('Critical!');
-    if (dodged) statusTags.push('Dodged!');
-
-    if (dodged) {
-      this.ui.flashEffect(this.ui.playerHealthBar, 'flash-dodge'); // Flash on dodge
-    } else if (isCrit) {
-      this.ui.flashEffect(this.ui.playerHealthBar, 'flash-crit'); // Flash on crit
-    }
-
-    const statusText = statusTags.length ? ` (${statusTags.join(' ')})` : '';
-
-    this.ui.logCombat(`${this.enemy.name} dealt ${damageDealt} damage${statusText} to ${this.player.name}.`);
-
-    this.checkCombatStatus();
-
-    // Switch turn if combat still ongoing
-    if (this.player.isAlive()) {
+    if (alive) {
       this.turn = 'player';
       this.ui.updateStats();
     }
   }
 
   checkCombatStatus() {
-    if (!this.player.isAlive()) {
-      this.ui.logCombat(`${this.player.name} has been defeated!`);
-      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerDefeated' } }));
+    if (!this.enemy.isAlive()) {
+      this.ui.logCombat(`${this.enemy.name} has been defeated!`);
+      window.dispatchEvent(new CustomEvent('combatEnded', {
+        detail: { result: 'enemyDefeated' }
+      }));
       return;
     }
 
-    if (!this.enemy.isAlive()) {
-      this.ui.logCombat(`${this.enemy.name} has been defeated!`);
-      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'enemyDefeated' } }));
+    if (!this.player.isAlive()) {
+      this.player.health = 0;
+      this.ui.logCombat(`${this.player.name} has been knocked out!`);
+      this.player.loseLife();
+      this.ui.updateStats();
+
+      const isOutOfLives = this.player.lives <= 0;
+      window.dispatchEvent(new CustomEvent('combatEnded', {
+        detail: {
+          result: isOutOfLives ? 'gameOver' : 'playerDefeated'
+        }
+      }));
       return;
     }
 
@@ -103,7 +121,6 @@ export class Combat {
     this.ui.updateStats();
 
     this.turn = this.determineTurnOrder();
-
     this.ui.logCombat(`${this.turn === 'player' ? this.player.name : this.enemy.name} goes first!`);
 
     if (this.turn === 'enemy') {

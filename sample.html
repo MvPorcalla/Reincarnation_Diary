@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Text-Based Game Health System</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #main-health {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    #combat-bar {
+      width: 200px;
+      height: 20px;
+      background: #ccc;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #combat-health {
+      height: 100%;
+      background: green;
+      width: 100%;
+      transition: width 0.3s;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Main Health (❤️)</h2>
+  <div id="main-health"></div>
+
+  <h2>Combat Health Bar</h2>
+  <div id="combat-bar">
+    <div id="combat-health"></div>
+  </div>
+
+  <button onclick="startCombat()">Start Combat</button>
+  <button onclick="takeCombatDamage(3)">Take 3 Damage</button>
+  <button onclick="healMainHealth(1)">Heal ❤️</button>
+  <button onclick="hurtMainHealth(1)">Lose ❤️</button>
+
+  <script>
+    // Main Health Setup
+    let maxMainHealth = 5;
+    let currentMainHealth = 5;
+
+    // Combat Health Setup
+    let maxCombatHealth = 10;
+    let currentCombatHealth = 10;
+
+    function updateMainHealthUI() {
+      const container = document.getElementById("main-health");
+      container.innerHTML = "❤️".repeat(currentMainHealth) + "🖤".repeat(maxMainHealth - currentMainHealth);
+    }
+
+    function updateCombatHealthUI() {
+      const healthPercent = (currentCombatHealth / maxCombatHealth) * 100;
+      document.getElementById("combat-health").style.width = healthPercent + "%";
+      document.getElementById("combat-health").style.background = 
+        healthPercent > 50 ? "green" : (healthPercent > 20 ? "orange" : "red");
+    }
+
+    function startCombat() {
+      currentCombatHealth = maxCombatHealth;
+      updateCombatHealthUI();
+    }
+
+    function takeCombatDamage(amount) {
+      currentCombatHealth -= amount;
+      if (currentCombatHealth <= 0) {
+        currentCombatHealth = 0;
+        loseMainHealth();
+      }
+      updateCombatHealthUI();
+    }
+
+    function loseMainHealth() {
+      currentMainHealth -= 1;
+      if (currentMainHealth <= 0) {
+        alert("Game Over");
+        currentMainHealth = 0;
+      }
+      updateMainHealthUI();
+    }
+
+    function healMainHealth(amount) {
+      currentMainHealth += amount;
+      if (currentMainHealth > maxMainHealth) currentMainHealth = maxMainHealth;
+      updateMainHealthUI();
+    }
+
+    function hurtMainHealth(amount) {
+      currentMainHealth -= amount;
+      if (currentMainHealth < 0) currentMainHealth = 0;
+      updateMainHealthUI();
+    }
+
+    // Initial UI Setup
+    updateMainHealthUI();
+    updateCombatHealthUI();
+  </script>
+
+</body>
+</html>
