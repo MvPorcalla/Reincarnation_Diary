@@ -1,0 +1,60 @@
+// story.js
+import { getRandomEnemy } from './enemy.js';
+import { createScene, recoverHealth } from './utils.js';
+
+export const story = {
+  currentScene: 'start',
+
+  scenes: {
+    start: createScene({
+      text: "You wake up in a dark forest. What do you do?",
+      choices: [
+        { text: "Walk forward", nextScene: 'walkForwardEncounter' },
+        { text: "Rest", nextScene: 'rest' },
+      ]
+    }),
+
+    rest: createScene({
+      text: "You take a moment to rest.",
+      choices: [],
+      onEnter(player, params) {
+        const chance = Math.random();
+        if (chance < 0.5) {
+          recoverHealth(player, 10);
+          this.text = "You recover 10 health. What next?";
+          this.choices = [{ text: "Continue walking", nextScene: 'walkForwardEncounter' }];
+        } else {
+          this.text = "As you rest, an enemy approaches!";
+          this.choices = [{ text: "Prepare to fight", nextScene: 'randomEncounterFight', params: { tier: 2 } }];
+        }
+      }
+    }),
+
+   // continue story...... 
+  },
+
+  getScene(sceneName) {
+    return this.scenes[sceneName];
+  },
+
+  setScene(sceneName, player, params = {}) {
+    this.currentScene = sceneName;
+    const scene = this.getScene(sceneName);
+    if (scene?.onEnter) {
+      scene.onEnter(player, params);
+    }
+  }
+};
+
+// Example of choice selection handler you can use with this system
+export function onChoiceSelected(choice, player) {
+  console.log('Choice selected:', choice);
+  if (choice.params) {
+    console.log('Params:', choice.params);
+    story.setScene(choice.nextScene, player, choice.params);
+  } else {
+    story.setScene(choice.nextScene, player);
+  }
+}
+
+

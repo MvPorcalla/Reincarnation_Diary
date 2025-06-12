@@ -2,11 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
-  <title>Reincarnation RPG</title>
-  <link rel="stylesheet" href="./css/uiStyle.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png" />
+  <title>Reincarnator Diary: Memoir of the Soulbound</title>
+  <link rel="stylesheet" href="./css/uiStyle.css" />
   <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
   <style>
     * {
@@ -54,7 +54,7 @@
     }
 
     .game-subtitle {
-      font-family: 'UnifrakturCook', cursive;
+      /* font-family: 'UnifrakturCook', cursive; */
       font-size: 1.5rem;
       color: #d0d0d0;
       text-shadow: 1px 1px 5px #000, 0 0 25px #ff7f2a, 0 0 5px #ff7f2a;
@@ -76,9 +76,9 @@
     .menu-button {
         font-size: 1.2rem;
         padding: 0.8rem 3rem;
-
+        background-color: transparent; /* Bright orange */
         border-radius: 5px;
-
+        color: #fff;
         cursor: pointer;
         transition: all 0.3s ease;
 
@@ -383,7 +383,6 @@
   beginNewLifeBtn.addEventListener('click', () => {
     handleGameStartSelection(); // Increment count and close modal
     console.log(`Starting a new life (intro) for the ${reincarnationCount} time!`);
-    // --- Add your logic to start the "baby intro" story here ---
     window.location.href = 'mainGame.html';
   });
 
