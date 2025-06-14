@@ -1,4 +1,6 @@
 // enemy.js
+import { calculateAttack } from './combatUtils.js';
+
 export class Enemy {
   constructor({ name, maxHealth, damage, critChance, tier, agi = 0, imageSrc }) {
     this.name = name;
@@ -9,13 +11,13 @@ export class Enemy {
     this.tier = tier;
     this.agi = agi;
     this.imageSrc = imageSrc;
-    this.onCombatLog = null;
   }
 
   attack() {
-    const isCrit = Math.random() < this.critChance;
-    const dmg = isCrit ? this.damage * 2 : this.damage;
-    return { damage: dmg, isCrit };
+    return calculateAttack({
+      baseDamage: this.damage,
+      critChance: this.critChance
+    });
   }
 
   get dodgeChance() {
@@ -24,7 +26,6 @@ export class Enemy {
 
   takeDamage(amount) {
     if (Math.random() < this.dodgeChance) {
-      if (this.onCombatLog) this.onCombatLog(`${this.name} dodged the attack!`);
       return true;
     }
     this.health = Math.max(this.health - amount, 0);

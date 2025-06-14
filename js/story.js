@@ -120,7 +120,7 @@ export const story = {
       id: 'templeEntrance',
       text: "You cautiously enter the temple. Suddenly, a guardian appears!",
       choices: [
-        { text: "Fight the Temple Guardian", nextScene: 'templeInnerFight', params: { tier: 1 } },
+        { text: "Fight the Temple Guardian", nextScene: 'templeInnerFight', params: { tier: 2 } },
         { text: "Run away", nextScene: 'gameOver' }
       ]
     }),

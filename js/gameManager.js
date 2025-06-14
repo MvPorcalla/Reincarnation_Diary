@@ -96,14 +96,6 @@ function renderScene() {
   ui.updateStats();
 }
 
-// function gameOver() {
-//   ui.storyTextEl.textContent = "💀 Game Over! You have been defeated.";
-//   ui.clearChoices();
-//   ui.createChoiceButton('Restart', () => {
-//     resetGame();
-//   });
-// }
-
 function resetGame() {
   player.reset(); // Reset stats, lives, etc.
   story.setScene("start", player);

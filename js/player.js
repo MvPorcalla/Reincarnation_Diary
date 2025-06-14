@@ -1,5 +1,7 @@
 // player.js
 
+import { calculateAttack } from './combatUtils.js';
+
 // List of random names
 const randomNames = [
   "Aria", "Leo", "Mira", "Zane", "Luna", "Kai", "Nova", "Rex", "Sage", "Tara"
@@ -29,7 +31,7 @@ export class Player {
   // Generates all stat values
   generateStats() {
     return {
-      maxHealth: this.getRandomInt(8, 12),
+      maxHealth: this.getRandomInt(80, 120),
 
       maxLives: 3,
 
@@ -69,6 +71,26 @@ export class Player {
     this.dodgeChance = stats.dodgeChance;
   }
 
+  attack() {
+    const bonus = Math.floor(this.str * 0.5) + this.getItemDamageBonus();
+    return calculateAttack({
+      baseDamage: this.baseDamage,
+      critChance: this.critChance,
+      bonus
+    });
+  }
+
+  takeDamage(amount) {
+    const dodgeChance = Math.min(this.agi * 0.03, 0.4); // AGI scaling with cap
+    const dodged = Math.random() < dodgeChance;
+
+    if (!dodged) {
+      this.health = Math.max(this.health - amount, 0);
+    }
+
+    return dodged;
+  }
+
   resetCombatHealth() {
     this.health = this.maxHealth;
   }
@@ -91,29 +113,6 @@ export class Player {
 
   getItemDamageBonus() {
     return 0; // Placeholder
-  }
-
-  attack() {
-    const baseDamage = this.baseDamage;
-    const strBonus = Math.floor(this.str * 0.5);
-    const itemBonus = this.getItemDamageBonus();
-    const totalDamage = baseDamage + strBonus + itemBonus;
-
-    const isCrit = Math.random() < this.critChance;
-    const damage = isCrit ? totalDamage * 2 : totalDamage;
-
-    return { damage, isCrit };
-  }
-
-  takeDamage(amount) {
-    const dodgeChance = Math.min(this.agi * 0.03, 0.4); // AGI scaling with cap
-    const dodged = Math.random() < dodgeChance;
-
-    if (!dodged) {
-      this.health = Math.max(this.health - amount, 0);
-    }
-
-    return dodged;
   }
 
   isAlive() {

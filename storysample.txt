@@ -7,11 +7,15 @@ export const story = {
 
   scenes: {
     start: createScene({
+      id: 'start',
       text: "You wake up in a dark forest. What do you do?",
       choices: [
         { text: "Walk forward", nextScene: 'walkForwardEncounter' },
         { text: "Rest", nextScene: 'rest' },
-      ]
+      ],
+      onEnter(player) {
+        player.reset();
+      }
     }),
 
     rest: createScene({
@@ -34,26 +38,35 @@ export const story = {
   },
 
   getScene(sceneName) {
-    return this.scenes[sceneName];
+    return this.scenes[sceneName] || this.scenes['gameOver'];
   },
 
-  setScene(sceneName, player, params = {}) {
+  async setScene(sceneName, player, params = {}) {
     this.currentScene = sceneName;
     const scene = this.getScene(sceneName);
     if (scene?.onEnter) {
-      scene.onEnter(player, params);
+      await scene.onEnter(player, params);
+    }
+  },
+
+  updateScene(sceneName, updates) {
+    const scene = this.getScene(sceneName);
+    if (scene) {
+      Object.assign(scene, updates);
     }
   }
 };
 
-// Example of choice selection handler you can use with this system
-export function onChoiceSelected(choice, player) {
+export async function onChoiceSelected(choice, player) {
   console.log('Choice selected:', choice);
+  if (choice.redirectTo) {
+    window.location.href = choice.redirectTo;
+    return;
+  }
   if (choice.params) {
-    console.log('Params:', choice.params);
-    story.setScene(choice.nextScene, player, choice.params);
-  } else {
-    story.setScene(choice.nextScene, player);
+    await story.setScene(choice.nextScene, player, choice.params);
+  } else if (choice.nextScene) {
+    await story.setScene(choice.nextScene, player);
   }
 }
 
