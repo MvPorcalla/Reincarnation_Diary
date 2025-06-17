@@ -89,61 +89,45 @@
 
 
 /* ================================================ FireFlies ================================================ */
-    /* Fireflies container */
-    .fireflies {
-        pointer-events: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 0;
-    }
+.fireflies {
+  pointer-events: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* Set higher/lower depending on layering needs */
+}
 
-    .firefly {
-        position: absolute;
-        width: 6px;   /* can be overridden inline */
-        height: 6px;  /* can be overridden inline */
-        background: radial-gradient(circle, 
-            #ffffff 0%,      
-            #fff9b0 30%,     
-            #ffcc4d 55%,     
-            #ff7f2a 80%,     
-            #d93600 100%     
-        );
-        border-radius: 50%;
-        opacity: 0.9;
-        animation-timing-function: ease-in-out;
-        animation-iteration-count: infinite;
-        animation-fill-mode: forwards;
-    }
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff9b0; /* Single soft yellow color */
+  box-shadow: 0 0 10px 2px #d93600;
+  border-radius: 50%;
+  opacity: 0.9;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+}
 
-    /* Float animations */
-    @keyframes float1 {
-        0%   { transform: translate(0, 0) scale(1); }
-        25%  { transform: translate(10px, -5px) scale(1.5); }
-        50%  { transform: translate(-10px, 5px) scale(1.2); }
-        75%  { transform: translate(5px, 10px) scale(1.4); }
-        100% { transform: translate(0, 0) scale(1); }
-    }
 
-    @keyframes float2 {
-        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
-        50%      { transform: translate(-8px, 10px) scale(0.9); opacity: 0.5; }
-    }
+/* Unified float and glow animation */
+@keyframes float {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.85; }
+  25%  { transform: translate(12px, -8px) scale(1.4); opacity: 1; }
+  50%  { transform: translate(-10px, 10px) scale(0.9); opacity: 0.6; }
+  75%  { transform: translate(6px, 8px) scale(1.2); opacity: 0.8; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+}
 
-    @keyframes float3 {
-        0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
-        25%      { transform: translate(12px, -12px) scale(1.5); opacity: 1; }
-        50%      { transform: translate(-12px, 12px) scale(0.85); opacity: 0.7; }
-        75%      { transform: translate(8px, 8px) scale(1.4); opacity: 0.9; }
-    }
-
-    @keyframes glow {
-        0%, 100% { opacity: 0; }
-        50%      { opacity: 1; }
-    }
+@keyframes glow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 1; }
+}
 
 /* ================================================ FireFlies ================================================ */
+
 
 /* Modal styles */
 /* Modal Background */
@@ -286,7 +270,7 @@
 <body>
 
   <div class="background"></div>
-  <div id="firefly-container" class="fireflies"></div>
+  <!-- <div id="firefly-container" class="fireflies"></div> -->
   <div>
     <h1 class="game-title">Reincarnator Diary: Memoir of the Soulbound</h1>
     <p class="game-subtitle">
@@ -406,10 +390,12 @@
 
 
   // --- Firefly animation setup (keep existing code) ---
-  const container = document.getElementById('firefly-container');
-  const quantity = window.innerWidth < 600 ? 8 : 16;
+ // Create the container dynamically
+  const container = document.createElement('div');
+  container.className = 'fireflies';
+  document.body.appendChild(container);
 
-  const animations = ['float1', 'float2', 'float3'];
+  const quantity = window.innerWidth < 600 ? 12 : 16;
 
   for (let i = 0; i < quantity; i++) {
     const firefly = document.createElement('div');
@@ -418,24 +404,23 @@
     const size = Math.random() * 3 + 3; // 3–6px
     const top = Math.random() * 90 + 5;
     const left = Math.random() * 90 + 5;
-    const float = animations[Math.floor(Math.random() * animations.length)];
-    const floatDur = (Math.random() * 6 + 8).toFixed(2); // 5–10s
-    const glowDur = (Math.random() * 3 + 4).toFixed(2);  // 2–5s
-    const delay = 0;
+    const float = 'float';
+    const floatDur = (Math.random() * 6 + 8).toFixed(2); // 8–14s
+    const glowDur = (Math.random() * 3 + 4).toFixed(2);  // 4–7s
 
     firefly.style.width = `${size}px`;
     firefly.style.height = `${size}px`;
     firefly.style.top = `${top}%`;
     firefly.style.left = `${left}%`;
-
     firefly.style.animation = `
-      ${float} ${floatDur}s ease-in-out ${delay}s infinite,
-      glow ${glowDur}s ease-in-out ${delay}s infinite
+      ${float} ${floatDur}s ease-in-out 0s infinite,
+      glow ${glowDur}s ease-in-out 0s infinite
     `;
 
     container.appendChild(firefly);
   }
 
+  // Pause animation when tab is not visible
   document.addEventListener("visibilitychange", () => {
     const fireflies = document.querySelectorAll('.firefly');
     fireflies.forEach(f => {
