@@ -66,10 +66,6 @@ function renderScene() {
 
     ui.createChoiceButton('Attack', () => {
       combat.playerAttack();
-
-      if (player.health <= 0) {
-        gameOver();
-      }
     });
 
     combat.start();
@@ -101,6 +97,13 @@ async function resetGame() {
   renderScene();
 }
 
+function getSafeNextScene(fallback = 'start') {
+  return story.getScene(player.nextAfterBattleScene)
+    ? player.nextAfterBattleScene
+    : fallback;
+}
+
+
 // Handle combat end event
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
@@ -120,10 +123,7 @@ window.addEventListener('combatEnded', (e) => {
 
   // Player defeated but still has lives
   if (detail.result === 'playerDefeated') {
-    const nextScene = story.getScene(player.nextAfterBattleScene)
-    ? player.nextAfterBattleScene
-    : 'start';
-
+    const nextScene = getSafeNextScene();
     ui.clearChoices();
     ui.createChoiceButton('Continue', async () => {
       await story.setScene(nextScene, player);
@@ -136,10 +136,7 @@ window.addEventListener('combatEnded', (e) => {
 
   // Enemy defeated
   if (detail.result === 'enemyDefeated') {
-    const nextScene = story.getScene(player.nextAfterBattleScene)
-    ? player.nextAfterBattleScene
-    : 'start';
-    
+    const nextScene = getSafeNextScene();
     ui.clearChoices();
     ui.createChoiceButton('Continue', async () => {
       await story.setScene(nextScene, player);

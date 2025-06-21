@@ -1,0 +1,102 @@
+gameOver: createScene({
+      id: 'gameOver',
+      text: "Your adventure ends here. Thanks for playing!",
+      choices: [
+        { text: "Summary", redirectTo: "./endScreen.html" }
+      ]
+    }),
+
+   error: createScene({
+      id: 'error',
+      text: "⚠️ An error occurred: The requested scene does not exist.",
+      choices: [
+        { text: "Return to start", nextScene: 'start' }
+      ]
+    })
+
+  },
+
+  getScene(sceneName) {
+    if (!this.scenes[sceneName]) {
+      console.error(`❌ Scene "${sceneName}" not found.`);
+      if (this.scenes['error']) {
+        return this.scenes['error'];
+      } else {
+        throw new Error(`Missing scene: "${sceneName}" and no fallback 'error' scene found.`);
+      }
+    }
+    return this.scenes[sceneName];
+  },
+
+  async setScene(sceneName, player, params = {}) {
+    const scene = this.getScene(sceneName);
+    this.currentScene = scene.id; // safely assign after confirming it exists
+
+    if (scene?.onEnter) {
+      await scene.onEnter(player, params);
+    }
+  },
+
+  updateScene(sceneName, updates) {
+    const scene = this.getScene(sceneName);
+    if (scene) {
+      Object.assign(scene, updates);
+    } 
+    else {
+      console.warn(`⚠️ Tried to update missing scene: ${sceneName}`);
+    }
+  }
+};
+
+export async function onChoiceSelected(choice, player) {
+  if (!choice.nextScene && !choice.redirectTo) {
+    console.warn("⚠️ Choice has no 'nextScene' or 'redirectTo':", choice);
+  }
+
+  if (choice.redirectTo) {
+    window.location.href = choice.redirectTo;
+    return;
+  }
+  if (choice.params) {
+    await story.setScene(choice.nextScene, player, choice.params);
+  } else if (choice.nextScene) {
+    await story.setScene(choice.nextScene, player);
+  }
+}
+
+
+
+
+
+getScene(sceneName) {
+    return this.scenes[sceneName] || this.scenes['gameOver'];
+  },
+
+  async setScene(sceneName, player, params = {}) {
+    this.currentScene = sceneName;
+    const scene = this.getScene(sceneName);
+    if (scene?.onEnter) {
+      await scene.onEnter(player, params);
+    }
+  },
+
+  updateScene(sceneName, updates) {
+    const scene = this.getScene(sceneName);
+    if (scene) {
+      Object.assign(scene, updates);
+    }
+  }
+};
+
+export async function onChoiceSelected(choice, player) {
+  console.log('Choice selected:', choice);
+  if (choice.redirectTo) {
+    window.location.href = choice.redirectTo;
+    return;
+  }
+  if (choice.params) {
+    await story.setScene(choice.nextScene, player, choice.params);
+  } else if (choice.nextScene) {
+    await story.setScene(choice.nextScene, player);
+  }
+}

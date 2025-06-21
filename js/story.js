@@ -216,13 +216,16 @@ export const story = {
   },
 
   getScene(sceneName) {
-  if (!this.scenes[sceneName]) {
-    console.error(`❌ Scene "${sceneName}" not found.`);
-    return this.scenes['error'];
-  }
-  return this.scenes[sceneName];
-}
-,
+    if (!this.scenes[sceneName]) {
+      console.error(`❌ Scene "${sceneName}" not found.`);
+      if (this.scenes['error']) {
+        return this.scenes['error'];
+      } else {
+        throw new Error(`Missing scene: "${sceneName}" and no fallback 'error' scene found.`);
+      }
+    }
+    return this.scenes[sceneName];
+  },
 
   async setScene(sceneName, player, params = {}) {
     this.currentScene = sceneName;
@@ -236,12 +239,18 @@ export const story = {
     const scene = this.getScene(sceneName);
     if (scene) {
       Object.assign(scene, updates);
+    } 
+    else {
+      console.warn(`⚠️ Tried to update missing scene: ${sceneName}`);
     }
   }
 };
 
 export async function onChoiceSelected(choice, player) {
-  console.log('Choice selected:', choice);
+  if (!choice.nextScene && !choice.redirectTo) {
+    console.warn("⚠️ Choice has no 'nextScene' or 'redirectTo':", choice);
+  }
+
   if (choice.redirectTo) {
     window.location.href = choice.redirectTo;
     return;
