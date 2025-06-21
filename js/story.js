@@ -1,5 +1,6 @@
 import { getRandomEnemy } from './enemy.js';
 import { createScene, recoverHealth } from './utils.js';
+import { devLog, devWarn, devError } from './debugger.js';
 
 export const story = {
   currentScene: 'start',
@@ -217,7 +218,7 @@ export const story = {
 
   getScene(sceneName) {
     if (!this.scenes[sceneName]) {
-      console.error(`❌ Scene "${sceneName}" not found.`);
+      devError(`❌ Scene "${sceneName}" not found.`);
       if (this.scenes['error']) {
         return this.scenes['error'];
       } else {
@@ -239,16 +240,15 @@ export const story = {
     const scene = this.getScene(sceneName);
     if (scene) {
       Object.assign(scene, updates);
-    } 
-    else {
-      console.warn(`⚠️ Tried to update missing scene: ${sceneName}`);
+    } else {
+      devWarn(`⚠️ Tried to update missing scene: ${sceneName}`);
     }
   }
 };
 
 export async function onChoiceSelected(choice, player) {
   if (!choice.nextScene && !choice.redirectTo) {
-    console.warn("⚠️ Choice has no 'nextScene' or 'redirectTo':", choice);
+    devWarn("⚠️ Choice has no 'nextScene' or 'redirectTo':", choice);
   }
 
   if (choice.redirectTo) {

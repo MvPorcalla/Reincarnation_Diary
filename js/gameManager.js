@@ -5,24 +5,17 @@ import { Combat } from './combat.js';
 import { UI } from './ui.js';
 import { story } from './story.js';
 import { validateStory } from './debugger.js';
+import { devLog, devWarn, devError, isDev } from './debugger.js';
+
+
 
 // ============================= Debugging and Validation =============================
-const isDev = true; // Set to false before deploying
 
 if (isDev) {
   validateStory(story);
 }
 // ============================= Debugging and Validation =============================
 
-// ============================= This is important dont remove =============================
-// Function to ask for player name (can replace prompt with UI later)
-// function askForPlayerName() {
-//   const name = prompt("Enter your player name (leave blank for random):");
-//   setPlayerName(name);
-// }
-// Ask for player name before creating player
-// askForPlayerName();
-// ============================= This is important dont remove =============================
 
 let player = new Player();  // Uses the updated playerName from player.js
 let currentEnemy = null;
@@ -32,22 +25,25 @@ const ui = new UI(player, null);
 
 // Change goToScene to async
 async function goToScene(sceneName, params = {}) {
-  story.currentScene = sceneName;  // set currentScene first
-  const scene = story.getScene(sceneName);
-
-  // Await onEnter if it exists and is async
-  if (scene.onEnter) {
-    // Check if onEnter returns a Promise (is async)
-    const result = scene.onEnter(player, params);
-    if (result instanceof Promise) {
-      await result;
+  try {
+    const scene = story.getScene(sceneName); // already safe
+    story.currentScene = sceneName;
+    // Await onEnter if it exists and is async
+    if (scene.onEnter) {
+      const result = scene.onEnter(player, params);
+      if (result instanceof Promise) await result;
     }
+    renderScene();
+  } catch (err) {
+    if (isDev) {
+      devWarn(`❌ Failed to load scene "${sceneName}":`, err);
+    }
+    await story.setScene('error', player);
+    renderScene();
   }
-
-  renderScene();
 }
 
-function renderScene() {
+async function renderScene() {
   const scene = story.getScene(story.currentScene);
 
   // Update story text
@@ -82,7 +78,7 @@ function renderScene() {
       if (choice.nextScene) {
         goToScene(choice.nextScene, choice.params || {});
       } else {
-        console.error("No nextScene or redirectTo specified in choice:", choice);
+        devError("No nextScene or redirectTo specified in choice:", choice);
       }
     });
 
@@ -103,14 +99,17 @@ function getSafeNextScene(fallback = 'start') {
     : fallback;
 }
 
+function clearCombatState() {
+  combat = null;
+  currentEnemy = null;
+}
 
 // Handle combat end event
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
 
   // Always clear current combat state first
-  combat = null;
-  currentEnemy = null;
+  clearCombatState();
 
   if (detail.result === 'gameOver') {
     ui.storyTextEl.textContent = "💀 Game Over! You have no lives left.";
@@ -126,6 +125,12 @@ window.addEventListener('combatEnded', (e) => {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
     ui.createChoiceButton('Continue', async () => {
+
+      ui.storyTextEl.textContent = "Loading...";
+      ui.clearChoices(); // Optional: prevent choice spamming
+      // Let the DOM update before awaiting
+      await new Promise(resolve => setTimeout(resolve, 0)); // allow UI to repaint
+
       await story.setScene(nextScene, player);
       renderScene();
     });
@@ -139,6 +144,12 @@ window.addEventListener('combatEnded', (e) => {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
     ui.createChoiceButton('Continue', async () => {
+
+      ui.storyTextEl.textContent = "Loading...";
+      ui.clearChoices(); // Optional: prevent choice spamming
+      // Let the DOM update before awaiting
+      await new Promise(resolve => setTimeout(resolve, 0)); // allow UI to repaint
+
       await story.setScene(nextScene, player);
       renderScene();
     });

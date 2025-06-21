@@ -1,4 +1,21 @@
+// debugger.js
+
 // ===================================  Debugger  ===================================
+
+export const isDev = true; // Set to false in production builds to disable debug logs
+
+// These wrappers ensure that debug logs (log, warn, error) are only shown in development mode.
+export function devLog(...args) {
+  if (isDev) console.log(...args);
+}
+export function devWarn(...args) {
+  if (isDev) console.warn(...args);
+}
+export function devError(...args) {
+  if (isDev) console.error(...args);
+}
+
+// ===================================  Story Validator  ===================================
 
 export function validateStory(story) {
   const sceneNames = Object.keys(story.scenes);
