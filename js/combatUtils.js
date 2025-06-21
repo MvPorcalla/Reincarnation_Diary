@@ -1,3 +1,4 @@
+// combatUtils.js
 /**
  * Calculates the result of an attack, including critical hit chance and bonus damage.
  * @param {Object} params - The attack parameters.

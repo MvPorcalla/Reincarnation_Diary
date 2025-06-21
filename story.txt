@@ -1,207 +1,84 @@
 // story.js
-import { getRandomEnemy } from './enemy.js';
-import { createScene, recoverHealth } from './utils.js';
 
-export const story = {
-  currentScene: 'start',
+Great question! Let’s clearly summarize **what each of these functions does** in plain terms:
 
-  scenes: {
-    start: createScene({
-      id: 'start',
-      text: "You wake up in a dark forest. What do you do?",
-      choices: [
-        { text: "Walk forward", nextScene: 'walkForwardEncounter' },
-        { text: "Rest", nextScene: 'rest' },
-      ],
-      onEnter(player) {
-        player.reset();
-      }
-    }),
+---
 
-    rest: createScene({
-      id: 'rest',
-      text: "You take a moment to rest.",
-      choices: [],
-      onEnter(player) {
-        const chance = Math.random();
-        if (chance < 0.5) {
-          recoverHealth(player, 10);
-          story.updateScene('rest', {
-            text: "You recover 10 health. What next?",
-            choices: [{ text: "Continue walking", nextScene: 'walkForwardEncounter' }]
-          });
-        } else {
-          story.updateScene('rest', {
-            text: "As you rest, an enemy approaches!",
-            choices: [{ text: "Prepare to fight", nextScene: 'randomEncounterFight', params: { tier: 2 } }]
-          });
-        }
-      }
-    }),
+### ✅ 1. `getScene(sceneName)`
 
-    walkForwardEncounter: createScene({
-      id: 'walkForwardEncounter',
-      text: "You walk forward and encounter a wild enemy.",
-      choices: [
-        { text: "Fight", nextScene: 'randomEncounterFight', params: { tier: 1 } },
-        { text: "Run away", nextScene: 'gameOver' }
-      ]
-    }),
+**Purpose:**
+Safely retrieves a scene from the story.
 
-    randomEncounterFight: createScene({
-      id: 'randomEncounterFight',
-      text: "The battle begins!",
-      choices: [],
-      async onEnter(player, params = {}) {
-        const tier = params.tier || 1;
-        try {
-          const enemy = await getRandomEnemy(tier);
-          this.encounter = enemy;
-          player.currentEnemy = enemy;
-          player.nextAfterBattleScene = 'postFightChoice';
-          story.updateScene('randomEncounterFight', {
-            text: `You fight the wild ${enemy.name}!`,
-            choices: []
-          });
-        } catch (error) {
-          story.updateScene('randomEncounterFight', {
-            text: error.message,
-            choices: [{ text: "Go back", nextScene: 'start' }]
-          });
-        }
-      }
-    }),
+**What it does:**
 
-    postFightChoice: createScene({
-      id: 'postFightChoice',
-      text: "You defeated the enemy! What do you want to do?",
-      choices: [
-        { text: "Continue walking", nextScene: 'walkForwardAfterFight' },
-        { text: "Rest", nextScene: 'rest' }
-      ],
-      onEnter(player) {
-        delete player.currentEnemy;
-        delete player.nextAfterBattleScene;
-      }
-    }),
+* Looks up the scene by its ID (like `"start"` or `"templeVictory"`).
+* If the scene doesn't exist, it returns a fallback — usually `'gameOver'`.
 
-    walkForwardAfterFight: createScene({
-      id: 'walkForwardAfterFight',
-      text: "You continue walking and see a mysterious temple ahead.",
-      choices: [
-        { text: "Enter the temple", nextScene: 'templeEntrance' },
-        { text: "Ignore and keep walking", nextScene: 'templeLeave' }
-      ]
-    }),
+**Think of it as:**
 
-    templeLeave: createScene({
-      id: 'templeLeave',
-      text: "You leave the temple and find a chest behind bushes.",
-      choices: [
-        { text: "Open the chest", nextScene: 'openChestEnd' },
-        { text: "Ignore and end adventure", nextScene: 'gameOver' }
-      ]
-    }),
+> “Get me the scene with this name. If it doesn’t exist, give me a default one so the game doesn’t break.”
 
-    openChestEnd: createScene({
-      id: 'openChestEnd',
-      text: "You open the chest and find gold and jewels.",
-      choices: [
-        { text: "End game", nextScene: 'gameOver' }
-      ],
-      onEnter(player) {
-        player.inventory = player.inventory || { gold: 0, items: [] };
-        player.inventory.gold += 200;
-        console.log("You obtained 200 gold!");
-      }
-    }),
+---
 
-    templeEntrance: createScene({
-      id: 'templeEntrance',
-      text: "You cautiously enter the temple. Suddenly, a guardian appears!",
-      choices: [
-        { text: "Fight the Temple Guardian", nextScene: 'templeInnerFight', params: { tier: 1 } },
-        { text: "Run away", nextScene: 'gameOver' }
-      ]
-    }),
+### ✅ 2. `setScene(sceneName, player, params = {})`
 
-    templeInnerFight: createScene({
-      id: 'templeInnerFight',
-      text: "The Temple Guardian stands before you!",
-      choices: [],
-      async onEnter(player, params = {}) {
-        const tier = params.tier || 1;
-        try {
-          const enemy = await getRandomEnemy(tier);
-          this.encounter = enemy;
-          player.currentEnemy = enemy;
-          player.nextAfterBattleScene = 'templeVictory';
-          story.updateScene('templeInnerFight', {
-            text: `You fight the Temple Guardian ${enemy.name}!`,
-            choices: []
-          });
-        } catch (error) {
-          story.updateScene('templeInnerFight', {
-            text: error.message,
-            choices: [{ text: "Go back", nextScene: 'start' }]
-          });
-        }
-      }
-    }),
+**Purpose:**
+Changes the current scene in the game and runs any logic tied to entering that scene.
 
-    templeVictory: createScene({
-      id: 'templeVictory',
-      text: "You defeated the guardian and retrieve an ancient sword!",
-      choices: [
-        { text: "End game", nextScene: 'gameOver' }
-      ],
-      onEnter(player) {
-        player.inventory = player.inventory || { gold: 0, items: [] };
-        player.inventory.items.push("Ancient Sword");
-        console.log("You obtained the ancient sword!");
-        delete player.currentEnemy;
-        delete player.nextAfterBattleScene;
-      }
-    }),
+**What it does:**
 
-    gameOver: createScene({
-      id: 'gameOver',
-      text: "Your adventure ends here. Thanks for playing!",
-      choices: [
-        { text: "Summary", redirectTo: "./endScreen.html" }
-      ]
-    })
-  },
+* Sets `story.currentScene` to the new scene name.
+* Retrieves the scene using `getScene()`.
+* If the scene has an `onEnter()` function, it runs it — this is where scene-specific setup happens (like healing, spawning enemies, etc).
 
-  getScene(sceneName) {
-    return this.scenes[sceneName] || this.scenes['gameOver'];
-  },
+**Think of it as:**
 
-  async setScene(sceneName, player, params = {}) {
-    this.currentScene = sceneName;
-    const scene = this.getScene(sceneName);
-    if (scene?.onEnter) {
-      await scene.onEnter(player, params);
-    }
-  },
+> “Change to this new scene and prepare it — run whatever setup it needs.”
 
-  updateScene(sceneName, updates) {
-    const scene = this.getScene(sceneName);
-    if (scene) {
-      Object.assign(scene, updates);
-    }
-  }
-};
+---
 
-export async function onChoiceSelected(choice, player) {
-  console.log('Choice selected:', choice);
-  if (choice.redirectTo) {
-    window.location.href = choice.redirectTo;
-    return;
-  }
-  if (choice.params) {
-    await story.setScene(choice.nextScene, player, choice.params);
-  } else if (choice.nextScene) {
-    await story.setScene(choice.nextScene, player);
-  }
-}
+### ✅ 3. `updateScene(sceneName, updates)`
+
+**Purpose:**
+Updates an existing scene’s text or choices dynamically while the game is running.
+
+**What it does:**
+
+* Looks up the scene by ID.
+* Merges in any updates you provide (like changing `text` or adding/removing `choices`).
+
+**Think of it as:**
+
+> “Modify this scene’s content (like its description or options) on the fly.”
+
+---
+
+### ✅ 4. `onChoiceSelected(choice, player)`
+
+**Purpose:**
+Handles what happens when the player clicks a button/choice in the UI.
+
+**What it does:**
+
+* Checks if the choice says to redirect to another page (`redirectTo`).
+* If not, it checks if the choice points to another scene (`nextScene`) and navigates to it.
+* If it has extra data (`params`), it sends that to the scene.
+
+**Think of it as:**
+
+> “The player clicked something — now go to the appropriate scene or URL.”
+
+---
+
+### 🔁 How they all connect:
+
+When the player clicks a choice →
+`onChoiceSelected()` runs →
+It calls `setScene()` →
+That fetches the scene via `getScene()` →
+Then it runs `onEnter()` if available →
+Optionally, scenes are modified with `updateScene()`.
+
+---
+
+If you’d like, I can give you a **diagram** of how these functions interact during gameplay.

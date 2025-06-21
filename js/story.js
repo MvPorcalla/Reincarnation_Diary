@@ -1,4 +1,3 @@
-// story.js
 import { getRandomEnemy } from './enemy.js';
 import { createScene, recoverHealth } from './utils.js';
 
@@ -51,7 +50,9 @@ export const story = {
     randomEncounterFight: createScene({
       id: 'randomEncounterFight',
       text: "The battle begins!",
-      choices: [],
+      choices: [
+        // 🔒 Hidden choice: leads to walkForwardAfterFight, which may be flagged as unreachable in the debugger.
+      ],
       async onEnter(player, params = {}) {
         const tier = params.tier || 1;
         try {
@@ -74,14 +75,29 @@ export const story = {
 
     postFightChoice: createScene({
       id: 'postFightChoice',
-      text: "You defeated the enemy! What do you want to do?",
-      choices: [
-        { text: "Continue walking", nextScene: 'walkForwardAfterFight' },
-        { text: "Rest", nextScene: 'rest' }
-      ],
-      onEnter(player) {
+      text: "",
+      choices: [],
+      onEnter(player, params = {}) {
         delete player.currentEnemy;
         delete player.nextAfterBattleScene;
+
+        if (params.result === 'enemyDefeated') {
+          story.updateScene('postFightChoice', {
+            text: "You defeated the enemy! What do you want to do?",
+            choices: [
+              { text: "Continue walking", nextScene: 'walkForwardAfterFight' },
+              { text: "Rest", nextScene: 'rest' }
+            ]
+          });
+        } else {
+          story.updateScene('postFightChoice', {
+            text: "You were defeated and barely escaped with your life.",
+            choices: [
+              { text: "Recover and move on", nextScene: 'walkForwardAfterFight' },
+              { text: "Take a rest", nextScene: 'rest' }
+            ]
+          });
+        }
       }
     }),
 
@@ -151,18 +167,35 @@ export const story = {
 
     templeVictory: createScene({
       id: 'templeVictory',
-      text: "You defeated the guardian and retrieve an ancient sword!",
-      choices: [
-        { text: "End game", nextScene: 'gameOver' }
-      ],
-      onEnter(player) {
-        player.inventory = player.inventory || { gold: 0, items: [] };
-        player.inventory.items.push("Ancient Sword");
-        console.log("You obtained the ancient sword!");
+      text: "",
+      choices: [],
+      onEnter(player, params = {}) {
         delete player.currentEnemy;
         delete player.nextAfterBattleScene;
+
+        player.inventory = player.inventory || { gold: 0, items: [] };
+
+        if (params.result === 'enemyDefeated') {
+          player.inventory.items.push("Ancient Sword");
+          console.log("You obtained the ancient sword!");
+
+          story.updateScene('templeVictory', {
+            text: "You defeated the guardian and retrieve an ancient sword!",
+            choices: [
+              { text: "End game", nextScene: 'gameOver' }
+            ]
+          });
+        } else {
+          story.updateScene('templeVictory', {
+            text: "The guardian proved too strong. You retreat wounded, vowing to return stronger.",
+            choices: [
+              { text: "Leave temple", nextScene: 'templeLeave' }
+            ]
+          });
+        }
       }
     }),
+    
 
     gameOver: createScene({
       id: 'gameOver',
@@ -170,12 +203,26 @@ export const story = {
       choices: [
         { text: "Summary", redirectTo: "./endScreen.html" }
       ]
+    }),
+
+    error: createScene({
+      id: 'error',
+      text: "⚠️ An error occurred: The requested scene does not exist.",
+      choices: [
+        { text: "Return to start", nextScene: 'start' }
+      ]
     })
+
   },
 
   getScene(sceneName) {
-    return this.scenes[sceneName] || this.scenes['gameOver'];
-  },
+  if (!this.scenes[sceneName]) {
+    console.error(`❌ Scene "${sceneName}" not found.`);
+    return this.scenes['error'];
+  }
+  return this.scenes[sceneName];
+}
+,
 
   async setScene(sceneName, player, params = {}) {
     this.currentScene = sceneName;

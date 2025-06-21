@@ -126,6 +126,11 @@ export class UI {
     });
   }
 
+  clearCombatLog() {
+    this.combatLog = '';
+    this.storyTextEl.textContent = '';
+  }
+
   endCombat(message) {
     this.enemy = null;
     this.enemyInfoEl.hidden = true;

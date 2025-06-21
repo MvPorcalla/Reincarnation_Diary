@@ -54,14 +54,14 @@ function renderScene() {
   ui.storyTextEl.textContent = scene.text;
   ui.clearChoices();
 
-  if (scene.encounter) {
+  if (scene.encounter && !combat) {
     currentEnemy = scene.encounter;  // enemy already created by story onEnter
     player.resetCombatHealth();  // Reset combat HP before new fight
 
     combat = new Combat(player, currentEnemy, ui);
+    
     ui.enemy = currentEnemy;
-    ui.combatLog = '';
-
+    ui.clearCombatLog();
     ui.showEnemyInStory();
 
     ui.createChoiceButton('Attack', () => {
@@ -95,16 +95,19 @@ function renderScene() {
 
   ui.updateStats();
 }
-
-function resetGame() {
-  player.reset(); // Reset stats, lives, etc.
-  story.setScene("start", player);
+async function resetGame() {
+  player.reset();
+  await story.setScene("start", player);
   renderScene();
 }
 
 // Handle combat end event
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
+
+  // Always clear current combat state first
+  combat = null;
+  currentEnemy = null;
 
   if (detail.result === 'gameOver') {
     ui.storyTextEl.textContent = "💀 Game Over! You have no lives left.";
@@ -117,11 +120,13 @@ window.addEventListener('combatEnded', (e) => {
 
   // Player defeated but still has lives
   if (detail.result === 'playerDefeated') {
-    const nextScene = player.nextAfterBattleScene || 'start';
-    story.setScene(nextScene, player);
+    const nextScene = story.getScene(player.nextAfterBattleScene)
+    ? player.nextAfterBattleScene
+    : 'start';
 
     ui.clearChoices();
-    ui.createChoiceButton('Continue', () => {
+    ui.createChoiceButton('Continue', async () => {
+      await story.setScene(nextScene, player);
       renderScene();
     });
 
@@ -131,11 +136,13 @@ window.addEventListener('combatEnded', (e) => {
 
   // Enemy defeated
   if (detail.result === 'enemyDefeated') {
-    const nextScene = player.nextAfterBattleScene || 'start';
-    story.setScene(nextScene, player);
-
+    const nextScene = story.getScene(player.nextAfterBattleScene)
+    ? player.nextAfterBattleScene
+    : 'start';
+    
     ui.clearChoices();
-    ui.createChoiceButton('Continue', () => {
+    ui.createChoiceButton('Continue', async () => {
+      await story.setScene(nextScene, player);
       renderScene();
     });
 

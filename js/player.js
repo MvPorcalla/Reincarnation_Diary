@@ -31,7 +31,7 @@ export class Player {
   // Generates all stat values
   generateStats() {
     return {
-      maxHealth: this.getRandomInt(80, 120),
+      maxHealth: this.getRandomInt(8, 12),
 
       maxLives: 3,
 
