@@ -7,15 +7,11 @@ import { story } from './story.js';
 import { validateStory } from './debugger.js';
 import { devLog, devWarn, devError, isDev } from './debugger.js';
 
-
-
 // ============================= Debugging and Validation =============================
-
 if (isDev) {
   validateStory(story);
 }
 // ============================= Debugging and Validation =============================
-
 
 let player = new Player();  // Uses the updated playerName from player.js
 let currentEnemy = null;
@@ -43,33 +39,28 @@ async function goToScene(sceneName, params = {}) {
   }
 }
 
-async function renderScene() {
-  const scene = story.getScene(story.currentScene);
+function renderCombat(scene) {
+  currentEnemy = scene.encounter;
+  player.resetCombatHealth();
 
-  // Update story text
-  ui.storyTextEl.textContent = scene.text;
-  ui.clearChoices();
+  combat = new Combat(player, currentEnemy, ui);
 
-  if (scene.encounter && !combat) {
-    currentEnemy = scene.encounter;  // enemy already created by story onEnter
-    player.resetCombatHealth();  // Reset combat HP before new fight
+  ui.enemy = currentEnemy;
+  ui.clearCombatLog();
+  ui.showEnemyInStory();
 
-    combat = new Combat(player, currentEnemy, ui);
-    
-    ui.enemy = currentEnemy;
-    ui.clearCombatLog();
-    ui.showEnemyInStory();
+  ui.createChoiceButton('Attack', () => {
+    combat.playerAttack();
+  });
 
-    ui.createChoiceButton('Attack', () => {
-      combat.playerAttack();
-    });
+  combat.start();
+}
 
-    combat.start();
-  } else {
-    // Non-combat scene: show choices
-    ui.enemy = null;
-    for (const choice of scene.choices) {
-      ui.createChoiceButton(choice.text, () => {
+function renderChoices(scene) {
+  ui.enemy = null;
+
+  scene.choices.forEach(choice => {
+    ui.createChoiceButton(choice.text, () => {
       if (choice.redirectTo) {
         window.location.href = choice.redirectTo;
         return;
@@ -78,15 +69,28 @@ async function renderScene() {
       if (choice.nextScene) {
         goToScene(choice.nextScene, choice.params || {});
       } else {
-        devError("No nextScene or redirectTo specified in choice:", choice);
+        devError("⚠️ No nextScene or redirectTo specified in choice:", choice);
       }
     });
+  });
+}
 
-    }
+async function renderScene() {
+  const scene = story.getScene(story.currentScene);
+
+  ui.storyTextEl.textContent = scene.text;
+  ui.clearChoices();
+
+  if (scene.encounter && !combat) {
+    renderCombat(scene);
+  } else {
+    renderChoices(scene);
   }
 
   ui.updateStats();
 }
+
+
 async function resetGame() {
   player.reset();
   await story.setScene("start", player);
@@ -104,6 +108,20 @@ function clearCombatState() {
   currentEnemy = null;
 }
 
+function createContinueButton(nextScene, result = null) {
+  ui.createChoiceButton('Continue', async () => {
+    ui.storyTextEl.textContent = "Loading...";
+    ui.clearChoices();
+    await new Promise(r => setTimeout(r, 0));
+
+    // Pass result as param
+    await story.setScene(nextScene, player, result ? { result } : {});
+    renderScene();
+  });
+}
+
+
+
 // Handle combat end event
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
@@ -120,46 +138,18 @@ window.addEventListener('combatEnded', (e) => {
     return;
   }
 
-  // Player defeated but still has lives
-  if (detail.result === 'playerDefeated') {
+  // Player or enemy defeated
+  if (['playerDefeated', 'enemyDefeated'].includes(detail.result)) {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
-    ui.createChoiceButton('Continue', async () => {
-
-      ui.storyTextEl.textContent = "Loading...";
-      ui.clearChoices(); // Optional: prevent choice spamming
-      // Let the DOM update before awaiting
-      await new Promise(resolve => setTimeout(resolve, 0)); // allow UI to repaint
-
-      await story.setScene(nextScene, player);
-      renderScene();
-    });
-
+    createContinueButton(nextScene, detail.result); // ✅ Pass result
     ui.updateStats();
     return;
   }
 
-  // Enemy defeated
-  if (detail.result === 'enemyDefeated') {
-    const nextScene = getSafeNextScene();
-    ui.clearChoices();
-    ui.createChoiceButton('Continue', async () => {
-
-      ui.storyTextEl.textContent = "Loading...";
-      ui.clearChoices(); // Optional: prevent choice spamming
-      // Let the DOM update before awaiting
-      await new Promise(resolve => setTimeout(resolve, 0)); // allow UI to repaint
-
-      await story.setScene(nextScene, player);
-      renderScene();
-    });
-
-    ui.updateStats();
-  }
 });
 
 // ============================= Game Initialization =============================
 (async () => {
   await goToScene('start');
 })();
-
