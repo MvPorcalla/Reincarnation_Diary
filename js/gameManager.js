@@ -1,6 +1,5 @@
-// gameManager.js
-import { setPlayerName, Player } from './player.js';
-import { createEnemy } from './enemy.js';
+// ============================= Imports =============================
+import { Player } from './player.js';
 import { Combat } from './combat.js';
 import { UI } from './ui.js';
 import { story } from './story.js';
@@ -11,20 +10,18 @@ import { devLog, devWarn, devError, isDev } from './debugger.js';
 if (isDev) {
   validateStory(story);
 }
-// ============================= Debugging and Validation =============================
 
+// ============================= Game State =============================
 let player = new Player();  // Uses the updated playerName from player.js
 let currentEnemy = null;
 let combat = null;
-
 const ui = new UI(player, null);
 
-// Change goToScene to async
+// ============================= Scene Management =============================
 async function goToScene(sceneName, params = {}) {
   try {
     const scene = story.getScene(sceneName); // already safe
     story.currentScene = sceneName;
-    // Await onEnter if it exists and is async
     if (scene.onEnter) {
       const result = scene.onEnter(player, params);
       if (result instanceof Promise) await result;
@@ -39,6 +36,24 @@ async function goToScene(sceneName, params = {}) {
   }
 }
 
+async function resetGame() {
+  player.reset();
+  await story.setScene("start", player);
+  renderScene();
+}
+
+function getSafeNextScene(fallback = 'start') {
+  return story.getScene(player.nextAfterBattleScene)
+    ? player.nextAfterBattleScene
+    : fallback;
+}
+
+function clearCombatState() {
+  combat = null;
+  currentEnemy = null;
+}
+
+// ============================= Rendering =============================
 function renderCombat(scene) {
   currentEnemy = scene.encounter;
   player.resetCombatHealth();
@@ -90,43 +105,20 @@ async function renderScene() {
   ui.updateStats();
 }
 
-
-async function resetGame() {
-  player.reset();
-  await story.setScene("start", player);
-  renderScene();
-}
-
-function getSafeNextScene(fallback = 'start') {
-  return story.getScene(player.nextAfterBattleScene)
-    ? player.nextAfterBattleScene
-    : fallback;
-}
-
-function clearCombatState() {
-  combat = null;
-  currentEnemy = null;
-}
-
 function createContinueButton(nextScene, result = null) {
   ui.createChoiceButton('Continue', async () => {
     ui.storyTextEl.textContent = "Loading...";
     ui.clearChoices();
     await new Promise(r => setTimeout(r, 0));
-
-    // Pass result as param
     await story.setScene(nextScene, player, result ? { result } : {});
     renderScene();
   });
 }
 
-
-
-// Handle combat end event
+// ============================= Combat End Handling =============================
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
 
-  // Always clear current combat state first
   clearCombatState();
 
   if (detail.result === 'gameOver') {
@@ -138,15 +130,13 @@ window.addEventListener('combatEnded', (e) => {
     return;
   }
 
-  // Player or enemy defeated
   if (['playerDefeated', 'enemyDefeated'].includes(detail.result)) {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
-    createContinueButton(nextScene, detail.result); // ✅ Pass result
+    createContinueButton(nextScene, detail.result);
     ui.updateStats();
     return;
   }
-
 });
 
 // ============================= Game Initialization =============================
