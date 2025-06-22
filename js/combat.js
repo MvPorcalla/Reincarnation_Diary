@@ -1,5 +1,6 @@
 // combat.js
 // This file handles the combat mechanics between the player and an enemy in a turn-based system.
+
 import { devLog, devWarn, devError } from './debugger.js';
 
 export class Combat {
@@ -7,8 +8,21 @@ export class Combat {
     this.player = player;
     this.enemy = enemy;
     this.ui = ui; // Expected methods: logCombat, flashEffect, updateStats
-    this.active = true; // ✅ Combat is active by default
+    this.active = true;
     this.turn = null;
+  }
+
+  // ================== Combat Lifecycle ==================
+
+  start() {
+    this.ui.logCombat(`A wild ${this.enemy.name} appears!`);
+
+    this.turn = this.determineTurnOrder();
+    this.ui.logCombat(`${this.turn === 'player' ? this.player.name : this.enemy.name} goes first!`);
+
+    if (this.turn === 'enemy') {
+      setTimeout(() => this.enemyAttack(), 1000);
+    }
   }
 
   determineTurnOrder() {
@@ -23,31 +37,62 @@ export class Combat {
     return Math.random() < 0.5 ? 'player' : 'enemy';
   }
 
+  // ================== Turn Handlers ==================
+
+  playerAttack() {
+    if (!this.active) return;
+    if (!this.ensureCorrectTurn('player')) return;
+
+    const alive = this.handleAttack({
+      attacker: this.player,
+      defender: this.enemy,
+      defenderBar: this.ui.enemyHealthBar,
+      isPlayer: true
+    });
+
+    if (alive && this.active) {
+      this.turn = 'enemy';
+      setTimeout(() => this.enemyAttack(), 1000);
+    }
+  }
+
+  enemyAttack() {
+    if (!this.active) return;
+    if (!this.ensureCorrectTurn('enemy')) return;
+
+    const alive = this.handleAttack({
+      attacker: this.enemy,
+      defender: this.player,
+      defenderBar: this.ui.playerHealthBar,
+      isPlayer: false
+    });
+
+    if (alive && this.active) {
+      this.turn = 'player';
+    }
+  }
+
+  // ================== Core Mechanics ==================
+
   handleAttack({ attacker, defender, defenderBar, isPlayer }) {
     const { damage, isCrit } = attacker.attack();
     const dodged = defender.takeDamage(damage);
     const damageDealt = dodged ? 0 : damage;
 
-    // Build status tags
+    // Tag building
     const tags = [];
-    if (dodged) {
-      tags.push('Dodged!');
-    } else if (isCrit) {
-      tags.push('Critical!');
-    }
-
+    if (dodged) tags.push('Dodged!');
+    else if (isCrit) tags.push('Critical!');
     const statusText = tags.length ? ` (${tags.join(' ')})` : '';
-    let message = '';
 
-    if (isPlayer) {
-      message = dodged
+    // Combat log message
+    const message = isPlayer
+      ? dodged
         ? `> You attacked ${defender.name} but missed!`
-        : `> You attacked ${defender.name} for ${damageDealt} damage${statusText}`;
-    } else {
-      message = dodged
+        : `> You attacked ${defender.name} for ${damageDealt} damage${statusText}`
+      : dodged
         ? `> ${attacker.name} attacked and missed!`
         : `> ${attacker.name} attacked you for ${damageDealt} damage${statusText}`;
-    }
 
     this.ui.logCombat(message);
 
@@ -59,80 +104,43 @@ export class Combat {
     }
 
     this.checkCombatStatus();
+    this.ui.updateStats();
+
     return defender.isAlive();
   }
 
-   ensureCorrectTurn(expectedTurn) {
+  ensureCorrectTurn(expectedTurn) {
     if (this.turn !== expectedTurn) {
       devError(`❌ Invalid action: It's currently ${this.turn}'s turn, expected ${expectedTurn}.`);
+      return false;
     }
+    return true;
   }
 
-  playerAttack() {
-    if (!this.active) return; // ✅ Prevent further input
-    if (!this.player.isAlive()) {
-      devWarn("⚠️ Player is already defeated, cannot attack.");
-      return;
-    }
-
-    this.ensureCorrectTurn('player');
-    if (this.turn !== 'player') return;
-
-    const alive = this.handleAttack({
-      attacker: this.player,
-      defender: this.enemy,
-      defenderBar: this.ui.enemyHealthBar,
-      isPlayer: true
-    });
-
-    if (alive) {
-      this.turn = 'enemy';
-      setTimeout(() => this.enemyAttack(), 1000);
-    }
-  }
-
-
-  enemyAttack() {
-    if (!this.active) return; // ✅ Prevent further input
-    if (!this.enemy.isAlive()) {
-      devWarn("⚠️ Enemy is already defeated, cannot attack.");
-      return;
-    }
-
-    this.ensureCorrectTurn('enemy');
-    if (this.turn !== 'enemy') return;
-
-    const alive = this.handleAttack({
-      attacker: this.enemy,
-      defender: this.player,
-      defenderBar: this.ui.playerHealthBar,
-      isPlayer: false
-    });
-
-    if (alive) {
-      this.turn = 'player';
-      this.ui.updateStats();
-    }
-  }
+  // ================== Combat State Evaluation ==================
 
   checkCombatStatus() {
     const playerAlive = this.player.isAlive();
     const enemyAlive = this.enemy.isAlive();
 
+    // Enemy defeated
     if (!enemyAlive) {
-        this.active = false; // ✅ Block further attacks
+      this.active = false;
       const flavor = this.enemy.defeatMessage || `${this.enemy.name} has been defeated!`;
       this.ui.logCombat(`\n${flavor}`);
 
       window.dispatchEvent(new CustomEvent('combatEnded', {
         detail: { result: 'enemyDefeated' }
       }));
+      return;
     }
 
+    // Player defeated
     if (!playerAlive) {
-        this.active = false; // ✅ Block further attacks
+      this.active = false;
       this.player.health = 0;
       this.player.loseLife();
+
       const isOutOfLives = this.player.lives <= 0;
 
       if (!isOutOfLives) {
@@ -143,20 +151,7 @@ export class Combat {
       window.dispatchEvent(new CustomEvent('combatEnded', {
         detail: { result: isOutOfLives ? 'gameOver' : 'playerDefeated' }
       }));
-    }
-
-    this.ui.updateStats();
-  }
-
-  start() {
-    this.ui.logCombat(`A wild ${this.enemy.name} appears!`);
-    this.ui.updateStats();
-
-    this.turn = this.determineTurnOrder();
-    this.ui.logCombat(`${this.turn === 'player' ? this.player.name : this.enemy.name} goes first!`);
-
-    if (this.turn === 'enemy') {
-      setTimeout(() => this.enemyAttack(), 1000);
+      return;
     }
   }
 }
