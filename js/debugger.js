@@ -1,4 +1,5 @@
 // debugger.js
+// This file contains debugging utilities and story validation functions for the game.
 
 // ===================================  Debugger  ===================================
 

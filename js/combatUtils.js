@@ -1,4 +1,5 @@
 // combatUtils.js
+// This file contains utility functions for combat mechanics in a turn-based system.
 /**
  * Calculates the result of an attack, including critical hit chance and bonus damage.
  * @param {Object} params - The attack parameters.

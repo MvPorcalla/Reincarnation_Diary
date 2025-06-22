@@ -1,4 +1,6 @@
 // enemy.js
+// This file defines the Enemy class and functions to manage enemy data and combat interactions.
+
 import { calculateAttack } from './combatUtils.js';
 
 export class Enemy {

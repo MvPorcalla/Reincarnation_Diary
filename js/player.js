@@ -1,4 +1,5 @@
 // player.js
+// This file defines the Player class and manages player-related functionality in the game.
 
 import { calculateAttack } from './combatUtils.js';
 

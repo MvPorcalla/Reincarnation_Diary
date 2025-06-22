@@ -1,4 +1,5 @@
 // ui.js
+// This file handles the user interface for the game, including displaying player and enemy stats, health
 export class UI {
   constructor(player, enemy) {
     this.player = player;
@@ -66,9 +67,9 @@ export class UI {
   }
 
   updateStats() {
-    document.querySelectorAll('.player-name').forEach(el => {
-  el.textContent = this.player.name;
-});
+      document.querySelectorAll('.player-name').forEach(el => {
+    el.textContent = this.player.name;
+  });
 
 
     // Update health bars via new method
@@ -85,6 +86,10 @@ export class UI {
     this.statElements.basedamage.textContent = this.player.baseDamage;
 
     // Update enemy info
+    this.updateEnemyUI();
+  }
+
+  updateEnemyUI() {
     if (this.enemy) {
       this.enemyNameEl.textContent = this.enemy.name;
       this.enemyImageEl.src = this.enemy.imageSrc;
@@ -95,15 +100,9 @@ export class UI {
     }
   }
 
+
   showEnemyInStory() {
-    if (this.enemy) {
-      this.enemyNameEl.textContent = this.enemy.name;
-      this.enemyImageEl.src = this.enemy.imageSrc;
-      this.enemyImageEl.alt = this.enemy.name;
-      this.enemyInfoEl.hidden = false;
-    } else {
-      this.enemyInfoEl.hidden = true;
-    }
+    this.updateEnemyUI();
   }
 
   clearChoices() {
@@ -113,6 +112,7 @@ export class UI {
   createChoiceButton(text, onClick) {
     const btn = document.createElement('button');
     btn.textContent = text;
+    btn.className = 'choice-button';
     btn.addEventListener('click', onClick);
     this.choicesContainer.appendChild(btn);
   }
@@ -131,13 +131,23 @@ export class UI {
     this.storyTextEl.textContent = '';
   }
 
-  endCombat(message) {
+  endCombat(message = 'You defeated the enemy!', result = 'playerWon') {
     this.enemy = null;
     this.enemyInfoEl.hidden = true;
-    this.logCombat(`You defeated the enemy!\n`);
+    this.logCombat(message + '\n');
     this.clearChoices();
     this.createChoiceButton('Continue', () => {
-      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result: 'playerWon' }}));
+      window.dispatchEvent(new CustomEvent('combatEnded', { detail: { result }}));
     });
   }
+  // endCombat(result = 'playerWon') {
+  //   this.enemy = null;
+  //   this.enemyInfoEl.hidden = true;
+  //   this.clearChoices();
+  //   this.createChoiceButton('Continue', () => {
+  //     window.dispatchEvent(new CustomEvent('combatEnded', {
+  //       detail: { result }
+  //     }));
+  //   });
+  // }
 }

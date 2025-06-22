@@ -1,3 +1,6 @@
+// combat.js
+// This file handles the combat mechanics between the player and an enemy in a turn-based system.
+
 export class Combat {
   constructor(player, enemy, ui) {
     this.player = player;

@@ -1,3 +1,6 @@
+// story.js
+// This file contains the main story logic, scene management, and player interactions for the game.
+
 import { getRandomEnemy } from './enemy.js';
 import { createScene, recoverHealth } from './utils.js';
 import { devLog, devWarn, devError } from './debugger.js';

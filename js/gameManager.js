@@ -1,3 +1,4 @@
+// gameManager.js
 // ============================= Imports =============================
 import { Player } from './player.js';
 import { Combat } from './combat.js';
@@ -54,6 +55,8 @@ function clearCombatState() {
 }
 
 // ============================= Rendering =============================
+
+// Note: move this later to ui.js
 function renderCombat(scene) {
   currentEnemy = scene.encounter;
   player.resetCombatHealth();
@@ -71,16 +74,20 @@ function renderCombat(scene) {
   combat.start();
 }
 
+// Note: move this later to ui.js
 function renderChoices(scene) {
   ui.enemy = null;
 
   scene.choices.forEach(choice => {
     ui.createChoiceButton(choice.text, () => {
+      
+      // Disable all choice buttons to prevent multiple clicks
+      ui.choicesContainer.querySelectorAll('button').forEach(b => b.disabled = true);
+
       if (choice.redirectTo) {
         window.location.href = choice.redirectTo;
         return;
       }
-
       if (choice.nextScene) {
         goToScene(choice.nextScene, choice.params || {});
       } else {
@@ -90,10 +97,11 @@ function renderChoices(scene) {
   });
 }
 
+
 async function renderScene() {
   const scene = story.getScene(story.currentScene);
 
-  ui.storyTextEl.textContent = scene.text;
+  ui.storyTextEl.textContent = scene.text || "The story fades into silence...";
   ui.clearChoices();
 
   if (scene.encounter && !combat) {
@@ -105,6 +113,7 @@ async function renderScene() {
   ui.updateStats();
 }
 
+// Note: move this later to ui.js
 function createContinueButton(nextScene, result = null) {
   ui.createChoiceButton('Continue', async () => {
     ui.storyTextEl.textContent = "Loading...";
