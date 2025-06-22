@@ -1,4 +1,6 @@
 // gameManager.js
+// This file manages the game state, scene transitions, and combat logic for a turn-based RPG.
+
 // ============================= Imports =============================
 import { Player } from './player.js';
 import { Combat } from './combat.js';
@@ -97,7 +99,6 @@ function renderChoices(scene) {
   });
 }
 
-
 async function renderScene() {
   const scene = story.getScene(story.currentScene);
 
@@ -114,25 +115,15 @@ async function renderScene() {
 }
 
 // Note: move this later to ui.js
-// function createContinueButton(nextScene, result = null) {
-//   ui.createChoiceButton('Continue', async () => {
-//     ui.storyTextEl.textContent = "Loading...";
-//     ui.clearChoices();
-//     await new Promise(r => setTimeout(r, 0));
-//     await story.setScene(nextScene, player, result ? { result } : {});
-//     renderScene();
-//   });
-// }
 function createContinueButton(nextScene, result = null, message = null) {
   ui.createChoiceButton('Continue', async () => {
     ui.storyTextEl.textContent = "Loading...";
     ui.clearChoices();
     await new Promise(r => setTimeout(r, 0));
-    await story.setScene(nextScene, player, { result, message }); // ✅ message forwarded
+    await story.setScene(nextScene, player, { result, message });
     renderScene();
   });
 }
-
 
 // ============================= Combat End Handling =============================
 window.addEventListener('combatEnded', (e) => {
@@ -155,7 +146,7 @@ window.addEventListener('combatEnded', (e) => {
   if (['playerDefeated', 'enemyDefeated'].includes(detail.result)) {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
-    createContinueButton(nextScene, detail.result, detail.message); // ✅ Pass custom message
+    createContinueButton(nextScene, detail.result, detail.message);
     ui.updateStats();
     return;
   }
@@ -163,6 +154,7 @@ window.addEventListener('combatEnded', (e) => {
 });
 
 // ============================= Game Initialization =============================
-(async () => {
+async function startGame() {
   await goToScene('start');
-})();
+}
+startGame();
