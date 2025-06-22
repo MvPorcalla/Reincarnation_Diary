@@ -54,9 +54,7 @@ export const story = {
     randomEncounterFight: createScene({
       id: 'randomEncounterFight',
       text: "The battle begins!",
-      choices: [
-        // 🔒 Hidden choice: leads to walkForwardAfterFight, which may be flagged as unreachable in the debugger.
-      ],
+      choices: [],
       async onEnter(player, params = {}) {
         const tier = params.tier || 1;
         try {
@@ -85,9 +83,26 @@ export const story = {
         delete player.currentEnemy;
         delete player.nextAfterBattleScene;
 
+        const flavorText = params.message || "You defeated the enemy!";
+        const earnedGold = 50;
+        const earnedExp = 30;
+
+        // Set up inventory and exp if not yet
+        player.inventory = player.inventory || { gold: 0, items: [] };
+        player.exp = player.exp || 0;
+
         if (params.result === 'enemyDefeated') {
+          // Add rewards
+          player.inventory.gold += earnedGold;
+          player.exp += earnedExp;
+
           story.updateScene('postFightChoice', {
-            text: "You defeated the enemy! What do you want to do?",
+            text: `${flavorText}
+
+🏅 Battle Rewards:
+- 💰 Gold Earned: ${earnedGold}
+- ✨ EXP Gained: ${earnedExp}
+            `.trim(),
             choices: [
               { text: "Continue walking", nextScene: 'walkForwardAfterFight' },
               { text: "Rest", nextScene: 'rest' }
@@ -178,16 +193,25 @@ export const story = {
         delete player.nextAfterBattleScene;
 
         player.inventory = player.inventory || { gold: 0, items: [] };
+        player.exp = player.exp || 0;
 
         if (params.result === 'enemyDefeated') {
+          const flavorText = params.message || "You defeated the guardian and retrieve an ancient sword!";
+          const earnedGold = 150;
+          const earnedExp = 100;
+
+          player.inventory.gold += earnedGold;
+          player.exp += earnedExp;
           player.inventory.items.push("Ancient Sword");
-          console.log("You obtained the ancient sword!");
 
           story.updateScene('templeVictory', {
-            text: "You defeated the guardian and retrieve an ancient sword!",
-            choices: [
-              { text: "End game", nextScene: 'gameOver' }
-            ]
+            text: `${flavorText}
+
+🏅 Battle Rewards:
+- 💰 Gold Earned: ${earnedGold}
+- ✨ EXP Gained: ${earnedExp}
+- 🗡️ Loot: Ancient Sword`,
+            choices: [{ text: "End game", nextScene: 'gameOver' }]
           });
         } else {
           story.updateScene('templeVictory', {
@@ -199,7 +223,6 @@ export const story = {
         }
       }
     }),
-    
 
     gameOver: createScene({
       id: 'gameOver',
@@ -216,17 +239,12 @@ export const story = {
         { text: "Return to start", nextScene: 'start' }
       ]
     })
-
   },
 
   getScene(sceneName) {
     if (!this.scenes[sceneName]) {
       devError(`❌ Scene "${sceneName}" not found.`);
-      if (this.scenes['error']) {
-        return this.scenes['error'];
-      } else {
-        throw new Error(`Missing scene: "${sceneName}" and no fallback 'error' scene found.`);
-      }
+      return this.scenes['error'] || (() => { throw new Error(`Missing scene: "${sceneName}" and no fallback 'error' scene.`); })();
     }
     return this.scenes[sceneName];
   },

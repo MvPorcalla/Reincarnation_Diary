@@ -94,9 +94,15 @@ export class Combat {
 
   checkCombatStatus() {
     if (!this.enemy.isAlive()) {
-      this.ui.logCombat(`${this.enemy.name} has been defeated!`);
+      const flavor = this.enemy.defeatMessage || `${this.enemy.name} has been defeated!`;
+
+      this.ui.logCombat(flavor);
+
       window.dispatchEvent(new CustomEvent('combatEnded', {
-        detail: { result: 'enemyDefeated' }
+        detail: {
+          result: 'enemyDefeated',
+          message: flavor // 👈 pass this to story
+        }
       }));
       return;
     }

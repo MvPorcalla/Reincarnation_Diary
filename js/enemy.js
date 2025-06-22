@@ -4,7 +4,7 @@
 import { calculateAttack } from './combatUtils.js';
 
 export class Enemy {
-  constructor({ name, maxHealth, damage, critChance, tier, agi = 0, imageSrc }) {
+  constructor({ name, maxHealth, damage, critChance, tier, agi = 0, imageSrc, defeatMessage }) {
     this.name = name;
     this.maxHealth = maxHealth;
     this.health = maxHealth;
@@ -13,6 +13,7 @@ export class Enemy {
     this.tier = tier;
     this.agi = agi;
     this.imageSrc = imageSrc;
+    this.defeatMessage = defeatMessage || `${name} has been defeated.`;
   }
 
   attack() {

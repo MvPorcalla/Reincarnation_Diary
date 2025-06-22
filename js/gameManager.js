@@ -80,7 +80,7 @@ function renderChoices(scene) {
 
   scene.choices.forEach(choice => {
     ui.createChoiceButton(choice.text, () => {
-      
+
       // Disable all choice buttons to prevent multiple clicks
       ui.choicesContainer.querySelectorAll('button').forEach(b => b.disabled = true);
 
@@ -114,19 +114,32 @@ async function renderScene() {
 }
 
 // Note: move this later to ui.js
-function createContinueButton(nextScene, result = null) {
+// function createContinueButton(nextScene, result = null) {
+//   ui.createChoiceButton('Continue', async () => {
+//     ui.storyTextEl.textContent = "Loading...";
+//     ui.clearChoices();
+//     await new Promise(r => setTimeout(r, 0));
+//     await story.setScene(nextScene, player, result ? { result } : {});
+//     renderScene();
+//   });
+// }
+function createContinueButton(nextScene, result = null, message = null) {
   ui.createChoiceButton('Continue', async () => {
     ui.storyTextEl.textContent = "Loading...";
     ui.clearChoices();
     await new Promise(r => setTimeout(r, 0));
-    await story.setScene(nextScene, player, result ? { result } : {});
+    await story.setScene(nextScene, player, { result, message }); // ✅ message forwarded
     renderScene();
   });
 }
 
+
 // ============================= Combat End Handling =============================
 window.addEventListener('combatEnded', (e) => {
   const detail = e.detail || {};
+  const result = e.detail?.result;
+  const message = e.detail?.message;
+
 
   clearCombatState();
 
@@ -142,10 +155,11 @@ window.addEventListener('combatEnded', (e) => {
   if (['playerDefeated', 'enemyDefeated'].includes(detail.result)) {
     const nextScene = getSafeNextScene();
     ui.clearChoices();
-    createContinueButton(nextScene, detail.result);
+    createContinueButton(nextScene, detail.result, detail.message); // ✅ Pass custom message
     ui.updateStats();
     return;
   }
+
 });
 
 // ============================= Game Initialization =============================
