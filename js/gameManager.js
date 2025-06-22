@@ -115,9 +115,19 @@ async function renderScene() {
 }
 
 // Note: move this later to ui.js
+// function createContinueButton(nextScene, result = null, message = null) {
+//   ui.createChoiceButton('Continue', async () => {
+//     ui.storyTextEl.textContent = "Loading...";
+//     ui.clearChoices();
+//     await new Promise(r => setTimeout(r, 0));
+//     await story.setScene(nextScene, player, { result, message });
+//     renderScene();
+//   });
+// }
 function createContinueButton(nextScene, result = null, message = null) {
+  if (message) ui.logCombat("\n" + message);
+  
   ui.createChoiceButton('Continue', async () => {
-    ui.storyTextEl.textContent = "Loading...";
     ui.clearChoices();
     await new Promise(r => setTimeout(r, 0));
     await story.setScene(nextScene, player, { result, message });
@@ -125,21 +135,24 @@ function createContinueButton(nextScene, result = null, message = null) {
   });
 }
 
+
+
 // ============================= Combat End Handling =============================
-window.addEventListener('combatEnded', (e) => {
+window.addEventListener('combatEnded', async (e) => {
   const detail = e.detail || {};
   const result = e.detail?.result;
   const message = e.detail?.message;
 
-
   clearCombatState();
 
   if (detail.result === 'gameOver') {
-    ui.storyTextEl.textContent = "💀 Game Over! You have no lives left.";
+    const nextScene = 'gameOver';
     ui.clearChoices();
-    ui.createChoiceButton('Restart', () => {
-      resetGame();
-    });
+    ui.logCombat("\n💀 You were defeated and lost all your lives.\n");
+
+    createContinueButton(nextScene, detail.result);
+
+    ui.updateStats();
     return;
   }
 

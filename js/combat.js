@@ -96,7 +96,7 @@ export class Combat {
     if (!this.enemy.isAlive()) {
       const flavor = this.enemy.defeatMessage || `${this.enemy.name} has been defeated!`;
 
-      this.ui.logCombat(flavor);
+      // this.ui.logCombat(flavor);
 
       window.dispatchEvent(new CustomEvent('combatEnded', {
         detail: {
@@ -106,14 +106,16 @@ export class Combat {
       }));
       return;
     }
-
+    
+    // Check if player is alive
     if (!this.player.isAlive()) {
       this.player.health = 0;
-      this.ui.logCombat(`${this.player.name} has been knocked out!`);
       this.player.loseLife();
-      this.ui.updateStats();
-
       const isOutOfLives = this.player.lives <= 0;
+      if (!isOutOfLives) {
+        this.ui.logCombat(`\n${this.player.name} has been knocked out!`);
+      }
+      this.ui.updateStats();
       window.dispatchEvent(new CustomEvent('combatEnded', {
         detail: {
           result: isOutOfLives ? 'gameOver' : 'playerDefeated'
@@ -121,7 +123,6 @@ export class Combat {
       }));
       return;
     }
-
     this.ui.updateStats();
   }
 

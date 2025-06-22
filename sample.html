@@ -33,6 +33,10 @@
   </style>
 </head>
 <body>
+  <div id="log">
+    Visible Text
+    <span style="display: none;">Hidden Text</span>
+  </div>
 
   <h2>Main Health (❤️)</h2>
   <div id="main-health"></div>
@@ -48,6 +52,10 @@
   <button onclick="hurtMainHealth(1)">Lose ❤️</button>
 
   <script>
+    let el = document.getElementById('log');
+    console.log(el.textContent); // "Visible Text Hidden Text"
+    console.log(el.innerText);   // "Visible Text"
+
     // Main Health Setup
     let maxMainHealth = 5;
     let currentMainHealth = 5;
