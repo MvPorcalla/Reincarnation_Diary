@@ -1,11 +1,13 @@
 // combat.js
 // This file handles the combat mechanics between the player and an enemy in a turn-based system.
+import { devLog, devWarn, devError } from './debugger.js';
 
 export class Combat {
   constructor(player, enemy, ui) {
     this.player = player;
     this.enemy = enemy;
     this.ui = ui; // Expected methods: logCombat, flashEffect, updateStats
+    this.active = true; // ✅ Combat is active by default
     this.turn = null;
   }
 
@@ -60,7 +62,20 @@ export class Combat {
     return defender.isAlive();
   }
 
+   ensureCorrectTurn(expectedTurn) {
+    if (this.turn !== expectedTurn) {
+      devError(`❌ Invalid action: It's currently ${this.turn}'s turn, expected ${expectedTurn}.`);
+    }
+  }
+
   playerAttack() {
+    if (!this.active) return; // ✅ Prevent further input
+    if (!this.player.isAlive()) {
+      devWarn("⚠️ Player is already defeated, cannot attack.");
+      return;
+    }
+
+    this.ensureCorrectTurn('player');
     if (this.turn !== 'player') return;
 
     const alive = this.handleAttack({
@@ -76,7 +91,15 @@ export class Combat {
     }
   }
 
+
   enemyAttack() {
+    if (!this.active) return; // ✅ Prevent further input
+    if (!this.enemy.isAlive()) {
+      devWarn("⚠️ Enemy is already defeated, cannot attack.");
+      return;
+    }
+
+    this.ensureCorrectTurn('enemy');
     if (this.turn !== 'enemy') return;
 
     const alive = this.handleAttack({
@@ -93,36 +116,35 @@ export class Combat {
   }
 
   checkCombatStatus() {
-    if (!this.enemy.isAlive()) {
-      const flavor = this.enemy.defeatMessage || `${this.enemy.name} has been defeated!`;
+    const playerAlive = this.player.isAlive();
+    const enemyAlive = this.enemy.isAlive();
 
-      // this.ui.logCombat(flavor);
+    if (!enemyAlive) {
+        this.active = false; // ✅ Block further attacks
+      const flavor = this.enemy.defeatMessage || `${this.enemy.name} has been defeated!`;
+      this.ui.logCombat(`\n${flavor}`);
 
       window.dispatchEvent(new CustomEvent('combatEnded', {
-        detail: {
-          result: 'enemyDefeated',
-          message: flavor // 👈 pass this to story
-        }
+        detail: { result: 'enemyDefeated' }
       }));
-      return;
     }
-    
-    // Check if player is alive
-    if (!this.player.isAlive()) {
+
+    if (!playerAlive) {
+        this.active = false; // ✅ Block further attacks
       this.player.health = 0;
       this.player.loseLife();
       const isOutOfLives = this.player.lives <= 0;
+
       if (!isOutOfLives) {
         this.ui.logCombat(`\n${this.player.name} has been knocked out!`);
       }
+
       this.ui.updateStats();
       window.dispatchEvent(new CustomEvent('combatEnded', {
-        detail: {
-          result: isOutOfLives ? 'gameOver' : 'playerDefeated'
-        }
+        detail: { result: isOutOfLives ? 'gameOver' : 'playerDefeated' }
       }));
-      return;
     }
+
     this.ui.updateStats();
   }
 

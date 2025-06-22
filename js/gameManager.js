@@ -58,7 +58,6 @@ function clearCombatState() {
 
 // ============================= Rendering =============================
 
-// Note: move this later to ui.js
 function renderCombat(scene) {
   currentEnemy = scene.encounter;
   player.resetCombatHealth();
@@ -76,7 +75,6 @@ function renderCombat(scene) {
   combat.start();
 }
 
-// Note: move this later to ui.js
 function renderChoices(scene) {
   ui.enemy = null;
 
@@ -114,16 +112,6 @@ async function renderScene() {
   ui.updateStats();
 }
 
-// Note: move this later to ui.js
-// function createContinueButton(nextScene, result = null, message = null) {
-//   ui.createChoiceButton('Continue', async () => {
-//     ui.storyTextEl.textContent = "Loading...";
-//     ui.clearChoices();
-//     await new Promise(r => setTimeout(r, 0));
-//     await story.setScene(nextScene, player, { result, message });
-//     renderScene();
-//   });
-// }
 function createContinueButton(nextScene, result = null, message = null) {
   if (message) ui.logCombat("\n" + message);
   
@@ -134,8 +122,6 @@ function createContinueButton(nextScene, result = null, message = null) {
     renderScene();
   });
 }
-
-
 
 // ============================= Combat End Handling =============================
 window.addEventListener('combatEnded', async (e) => {
