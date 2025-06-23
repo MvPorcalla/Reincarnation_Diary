@@ -13,7 +13,6 @@ export class Combat {
   }
 
   // ================== Combat Lifecycle ==================
-
   start() {
     this.ui.logCombat(`A wild ${this.enemy.name} appears!`);
 
@@ -38,7 +37,6 @@ export class Combat {
   }
 
   // ================== Turn Handlers ==================
-
   playerAttack() {
     if (!this.active) return;
     if (!this.ensureCorrectTurn('player')) return;
@@ -73,7 +71,6 @@ export class Combat {
   }
 
   // ================== Core Mechanics ==================
-
   handleAttack({ attacker, defender, defenderBar, isPlayer }) {
     const { damage, isCrit } = attacker.attack();
     const dodged = defender.takeDamage(damage);
@@ -118,7 +115,6 @@ export class Combat {
   }
 
   // ================== Combat State Evaluation ==================
-
   checkCombatStatus() {
     const playerAlive = this.player.isAlive();
     const enemyAlive = this.enemy.isAlive();
