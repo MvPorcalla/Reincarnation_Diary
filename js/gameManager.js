@@ -91,7 +91,7 @@ function renderChoices(scene) {
       if (choice.nextScene) {
         goToScene(choice.nextScene, choice.params || {});
       } else {
-        devError("⚠️ No nextScene or redirectTo specified in choice:", choice);
+        devWarn("⚠️ No nextScene or redirectTo specified in choice:", choice);
       }
     });
   });
