@@ -58,7 +58,7 @@ export function createEnemy(params) {
 
 // ============================= Enemy Data Loader =============================
 
-const enemyDataCache = { current: null }; // ✅ Const object for safe mutation
+const enemyDataCache = { current: null };
 
 export async function loadEnemyData() {
   if (enemyDataCache.current) return enemyDataCache.current; // Return cached data
