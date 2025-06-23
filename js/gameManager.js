@@ -20,11 +20,21 @@ let currentEnemy = null;
 let combat = null;
 const ui = new UI(player, null);
 
+const sceneCache = {};
+
 // ============================= Scene Management =============================
 async function goToScene(sceneName, params = {}) {
   try {
-    const scene = story.getScene(sceneName); // already safe
+    let scene;
+    if (sceneCache[sceneName]) {
+      scene = sceneCache[sceneName];
+    } else {
+      scene = story.getScene(sceneName);
+      sceneCache[sceneName] = scene; // Cache it for future use
+    }
+
     story.currentScene = sceneName;
+
     if (scene.onEnter) {
       const result = scene.onEnter(player, params);
       if (result instanceof Promise) await result;
@@ -39,8 +49,10 @@ async function goToScene(sceneName, params = {}) {
   }
 }
 
+
 async function resetGame() {
   player.reset();
+  Object.keys(sceneCache).forEach(key => delete sceneCache[key]); // Clear cache
   await story.setScene("start", player);
   renderScene();
 }
