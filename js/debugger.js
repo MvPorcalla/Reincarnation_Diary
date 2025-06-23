@@ -1,37 +1,44 @@
 // debugger.js
 // This file contains debugging utilities and story validation functions for the game.
 
-// ===================================  Debugger  ===================================
+// =============================== Debugger Utilities ===============================
 
 export const isDev = true; // Set to false in production builds to disable debug logs
 
-// These wrappers ensure that debug logs (log, warn, error) are only shown in development mode.
 export function devLog(...args) {
   if (isDev) console.log(...args);
 }
+
 export function devWarn(...args) {
   if (isDev) console.warn(...args);
 }
+
 export function devError(...args) {
   if (isDev) console.error(...args);
 }
 
-// =================================   Error Thrower  =================================
+// =============================== Error Thrower ===============================
 
 /**
- * Logs the error (if in dev) and throws it.
+ * Logs the error (if in dev mode) and throws it to stop execution.
  * @param {string} message - The error message to log and throw.
- * @param {string} [context] - Optional context to describe where the error occurred.
+ * @param {string} [context] - Optional function name or context.
  */
-
 export function throwError(message, context = '') {
   const fullMessage = context ? `❌ ${context}: ${message}` : `❌ ${message}`;
   devError(fullMessage); // Log to console if in dev mode
-  throw new Error(fullMessage); // Stop execution
+  throw new Error(fullMessage); // Throw to stop execution
 }
 
-// ==================================  Story Validator  ==================================
+// =============================== Story Validator ===============================
 
+/**
+ * Validates a story structure:
+ * - Checks for duplicate scene names.
+ * - Identifies missing nextScene targets.
+ * - Detects unreachable scenes.
+ * @param {object} story - The story object to validate.
+ */
 export function validateStory(story) {
   const sceneNames = Object.keys(story.scenes);
   const referencedScenes = new Set();
@@ -72,18 +79,16 @@ export function validateStory(story) {
 
   // 4. Output validation results
   if (duplicateScenes.size > 0) {
-    console.warn(`⚠️ Duplicate scene names: ${Array.from(duplicateScenes).join(', ')}`);
+    devWarn(`⚠️ Duplicate scene names: ${Array.from(duplicateScenes).join(', ')}`);
   }
 
   if (missingScenes.length > 0) {
-    console.error(`❌ Missing nextScene targets: ${missingScenes.join(', ')}`);
+    devError(`❌ Missing nextScene targets: ${missingScenes.join(', ')}`);
   }
 
   if (unreachableScenes.length > 0) {
-    console.warn(`⚠️ Unreachable scenes: ${unreachableScenes.join(', ')}`);
+    devWarn(`⚠️ Unreachable scenes: ${unreachableScenes.join(', ')}`);
   } else {
-    console.log('✅ Story validation passed: No missing or unreachable scenes.');
+    devLog('✅ Story validation passed: No missing or unreachable scenes.');
   }
 }
-
-// ===================================  Debugger  ===================================
