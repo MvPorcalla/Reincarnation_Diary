@@ -2,8 +2,11 @@
 // This file defines the Enemy class and functions to manage enemy data and combat interactions.
 
 import { calculateAttack } from './combatUtils.js';
+import { devLog, devWarn, devError, throwError, isDev } from './debugger.js';
 
+// ============================= Enemy Class =============================
 export class Enemy {
+  // ======================= Game Initialization =======================
   constructor({ name, maxHealth, damage, critChance, tier, agi = 0, imageSrc, defeatMessage }) {
     this.name = name;
     this.maxHealth = maxHealth;
@@ -16,6 +19,7 @@ export class Enemy {
     this.defeatMessage = defeatMessage || `${name} has been defeated.`;
   }
 
+  // ======================= Combat Actions =======================
   attack() {
     return calculateAttack({
       baseDamage: this.damage,
@@ -24,47 +28,62 @@ export class Enemy {
   }
 
   get dodgeChance() {
-    return Math.min(this.agi * 0.02, 0.3);
+    return Math.min(this.agi * 0.02, 0.3); // AGI-based dodge cap at 30%
   }
 
   takeDamage(amount) {
     if (Math.random() < this.dodgeChance) {
-      return true;
+      return true; // Dodged
     }
     this.health = Math.max(this.health - amount, 0);
-    return false;
+    return false; // Took damage
   }
 
   isAlive() {
     return this.health > 0;
   }
+
+  // ======================= Optional Utility =======================
+  resetHealth() {
+    this.health = this.maxHealth;
+  }
 }
 
-// Factory function (optional, or just inline)
+// ============================= Enemy Factory =============================
 export function createEnemy(params) {
-  return new Enemy(params);
+  const enemy = new Enemy(params);
+  devLog(`⚔️ Enemy created: ${enemy.name} (Tier ${enemy.tier})`);
+  return enemy;
 }
 
-// Change enemyTiers to store **functions** that return new Enemy instances
-let enemyDataCache = null;
+// ============================= Enemy Data Loader =============================
+
+const enemyDataCache = { current: null }; // ✅ Const object for safe mutation
 
 export async function loadEnemyData() {
-  if (enemyDataCache) return enemyDataCache; // cache it after first load
-  const response = await fetch('./assets/data/enemyData.json');
-  if (!response.ok) {
-    throw new Error('Failed to load enemy data');
+  if (enemyDataCache.current) return enemyDataCache.current; // Return cached data
+
+  try {
+    const response = await fetch('./assets/data/enemyData.json');
+    if (!response.ok) {
+      throwError('❌ Failed to load enemy data.', 'loadEnemyData');
+    }
+
+    enemyDataCache.current = await response.json();
+    return enemyDataCache.current;
+
+  } catch (error) {
+    throwError(`❌ Error loading enemy data: ${error.message}`, 'loadEnemyData');
   }
-  enemyDataCache = await response.json();
-  return enemyDataCache;
 }
 
-// Get random enemy from tier, asynchronously now
+// ============================= Enemy Generator =============================
 export async function getRandomEnemy(tier) {
   const enemyData = await loadEnemyData();
 
   const enemies = enemyData[tier];
   if (!enemies || enemies.length === 0) {
-    throw new Error(`No enemies defined for tier ${tier}`);
+    throwError(`❌ No enemies defined for tier ${tier}`, 'getRandomEnemy');
   }
 
   const randomIndex = Math.floor(Math.random() * enemies.length);

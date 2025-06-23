@@ -18,17 +18,17 @@ export function calculateAttack({
 }) {
   if (typeof baseDamage !== 'number' || isNaN(baseDamage)) {
     devError(`Invalid baseDamage: ${baseDamage}`);
-    throw new Error(`Invalid baseDamage: ${baseDamage}`);
+    throwError(`Invalid baseDamage: ${baseDamage}`);
   }
 
   if (typeof critChance !== 'number' || isNaN(critChance) || critChance < 0 || critChance > 1) {
     devError(`Invalid critChance: ${critChance}. It should be a number between 0 and 1.`);
-    throw new Error(`Invalid critChance: ${critChance}. It should be a number between 0 and 1.`);
+    throwError(`Invalid critChance: ${critChance}. It should be a number between 0 and 1.`);
   }
 
   if (typeof bonus !== 'number' || isNaN(bonus)) {
     devError(`Invalid bonus: ${bonus}`);
-    throw new Error(`Invalid bonus: ${bonus}`);
+    throwError(`Invalid bonus: ${bonus}`);
   }
 
   const totalDamage = baseDamage + bonus;

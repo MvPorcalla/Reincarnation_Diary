@@ -16,7 +16,21 @@ export function devError(...args) {
   if (isDev) console.error(...args);
 }
 
-// ===================================  Story Validator  ===================================
+// =================================   Error Thrower  =================================
+
+/**
+ * Logs the error (if in dev) and throws it.
+ * @param {string} message - The error message to log and throw.
+ * @param {string} [context] - Optional context to describe where the error occurred.
+ */
+
+export function throwError(message, context = '') {
+  const fullMessage = context ? `❌ ${context}: ${message}` : `❌ ${message}`;
+  devError(fullMessage); // Log to console if in dev mode
+  throw new Error(fullMessage); // Stop execution
+}
+
+// ==================================  Story Validator  ==================================
 
 export function validateStory(story) {
   const sceneNames = Object.keys(story.scenes);
