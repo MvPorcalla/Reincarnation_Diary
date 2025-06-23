@@ -2,56 +2,46 @@
 // This file defines the Player class and manages player-related functionality in the game.
 
 import { calculateAttack } from './combatUtils.js';
+import { devLog } from './debugger.js';
+
+// ============================= Constants =============================
 
 // List of random names
 const randomNames = [
   "Aria", "Leo", "Mira", "Zane", "Luna", "Kai", "Nova", "Rex", "Sage", "Tara"
 ];
 
-// Helper to get random name
-function getRandomName() {
-  return randomNames[Math.floor(Math.random() * randomNames.length)];
-}
+// ============================= Player Class =============================
 
-// Declare a global variable for player name inside this module, default random
-export let playerName = getRandomName();
-
-// A function to update the playerName variable
-export function setPlayerName(name) {
-  // Ensure name is not null/undefined, and slice to max 16 characters
-  playerName = (name || getRandomName()).slice(0, 16);
-}
-
-// Player class uses the global playerName variable by default
 export class Player {
-  constructor(name = playerName) {
-    this.name = name;
+  // ======================= Game Initialization =======================
+  constructor() {
+    this.name = Player.getRandomName(); // Always assign random name on creation
     this.setInitialStats();
+    devLog(`🎮 New player created: ${this.name}`);
   }
 
-  // Generates all stat values
+  // ======================= Player Stats Generation =======================
   generateStats() {
     return {
-      maxHealth: this.getRandomInt(80, 120),
-
+      maxHealth: Player.getRandomInt(80, 120),
       maxLives: 2,
 
-      str: this.getRandomInt(5, 12),
-      agi: this.getRandomInt(5, 12),
-      int: this.getRandomInt(5, 12),
-      chr: this.getRandomInt(5, 12),
-      end: this.getRandomInt(5, 12),
-      wis: this.getRandomInt(5, 12),
-      baseDamage: this.getRandomInt(8, 12),
+      str: Player.getRandomInt(5, 12),
+      agi: Player.getRandomInt(5, 12),
+      int: Player.getRandomInt(5, 12),
+      chr: Player.getRandomInt(5, 12),
+      end: Player.getRandomInt(5, 12),
+      wis: Player.getRandomInt(5, 12),
+
+      baseDamage: Player.getRandomInt(8, 12),
       critChance: Math.random() * 0.15,
       dodgeChance: 0.15,
-    
       soulPower: 50,
-
     };
   }
 
-  // Applies generated stats to the player
+  // ======================= Player Stats Setup =======================
   setInitialStats() {
     const stats = this.generateStats();
 
@@ -69,9 +59,12 @@ export class Player {
     this.soulPower = stats.soulPower;
     this.baseDamage = stats.baseDamage;
     this.critChance = stats.critChance;
-    this.dodgeChance = stats.dodgeChance;
+
+    // Calculate initial dodge chance based on AGI
+    this.dodgeChance = Math.min(this.agi * 0.03, 0.4);
   }
 
+  // ======================= Combat Actions =======================
   attack() {
     const bonus = Math.floor(this.str * 0.5) + this.getItemDamageBonus();
     return calculateAttack({
@@ -82,8 +75,7 @@ export class Player {
   }
 
   takeDamage(amount) {
-    const dodgeChance = Math.min(this.agi * 0.03, 0.4); // AGI scaling with cap
-    const dodged = Math.random() < dodgeChance;
+    const dodged = Math.random() < this.dodgeChance;
 
     if (!dodged) {
       this.health = Math.max(this.health - amount, 0);
@@ -96,8 +88,10 @@ export class Player {
     this.health = this.maxHealth;
   }
 
+  // ======================= Game State Management =======================
   reset() {
     this.setInitialStats();
+    devLog(`🔄 Player ${this.name} stats have been reset.`);
   }
 
   loseLife() {
@@ -108,15 +102,21 @@ export class Player {
     return this.lives <= 0;
   }
 
-  getRandomInt(min, max) {
+  isAlive() {
+    return this.health > 0;
+  }
+
+  // ======================= Utility Methods =======================
+  getItemDamageBonus() {
+    return 0; // Placeholder for future item bonuses
+  }
+
+  static getRandomInt(min, max) {
+    if (min > max) [min, max] = [max, min]; // Swap if accidentally reversed
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  getItemDamageBonus() {
-    return 0; // Placeholder
-  }
-
-  isAlive() {
-    return this.health > 0;
+  static getRandomName() {
+    return randomNames[Math.floor(Math.random() * randomNames.length)];
   }
 }
