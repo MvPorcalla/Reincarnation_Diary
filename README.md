@@ -5,7 +5,7 @@
 ![GitHub stars](https://img.shields.io/github/stars/MvPorcalla/Reincarnation_Diary)
 ![GitHub license](https://img.shields.io/github/license/MvPorcalla/Reincarnation_Diary)
 
-[![Donate](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20-blue)](https://www.buymeacoffee.com/yourusername)
+<!-- [![Donate](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20-blue)](https://www.buymeacoffee.com/yourusername) -->
 
 ## 📖 Description
 **Reincarnation Diary** is a text-based RPG featuring a **story-branching system** and **turn-based combat**.  
