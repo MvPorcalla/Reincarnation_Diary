@@ -31,6 +31,8 @@ The game is managed by `GameManager.js`, which integrates all core modules such 
 - [Contact](#-contact)
 - [Contributions](#-contributions)
 <!-- - [Support the Developer](#-support-the-developer) -->
+- [License](#-license)
+
 
 ---
 
@@ -230,3 +232,11 @@ Your contribution will help me continue improving this project and developing mo
 
 Every donation is greatly appreciated and will help me keep this project alive and growing. Thank you! 🙏
 -->
+
+---
+
+## 📄 License
+This project is licensed under the **MIT License**.  
+You are free to use, modify, and distribute this project, provided that you give proper credit.
+
+See the [LICENSE](./LICENSE) file for more details.
