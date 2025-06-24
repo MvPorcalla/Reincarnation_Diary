@@ -16,6 +16,10 @@ The game is managed by `GameManager.js`, which integrates all core modules such 
 
 ---
 
+[📦 How to Convert to Electron (Desktop App)](docs/ELECTRON_SETUP.md)
+
+---
+
 ## 📚 Table of Contents
 - [Description](#-description)
 - [Installation](#️-installation)
@@ -65,10 +69,16 @@ The game is managed by `GameManager.js`, which integrates all core modules such 
 
 ---
 
-## 🚀 Planned Future Improvements
-- Save/Load functionality
-- Player inventory system
-- Sound effects and background music
+## 🔮 Planned Future Improvements
+
+- LocalStorage-based account system  
+- Automatic save system (prevents progress loss on refresh)  
+- Import/Export player account data  
+- expanded Job Class system  
+- Character ranking and lifetime progression system  
+- Sound effects and background music  
+- Visual story summary and achievement showcase at game end  
+- Packaging the game as a standalone desktop app using Electron  
 
 ---
 
