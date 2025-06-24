@@ -5,7 +5,7 @@ Reincarnation Diary is a text-based RPG featuring a story-branching system and t
 Players progress by making meaningful choices that shape the storyline while facing enemies in strategic battles. T
 he game is managed by `GameManager.js`, which integrates all core modules such as Player, Enemy, Combat, UI, Story, and more.
 
-![Game Preview](./assets/images/background/bg1.png)
+![Game Preview](./assets/images/background/preview.png)
 
 ## Installation
 1. Download or clone this project to your local machine.
