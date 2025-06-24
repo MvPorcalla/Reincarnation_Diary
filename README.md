@@ -70,8 +70,6 @@ Reincarnation_Diary
 └── README.md                      # Project documentation
 -->
 
----
-
 # 📄 File Descriptions
 
 ### `GameManager.js`
