@@ -2,8 +2,8 @@
 
 ## Description
 Reincarnation Diary is a text-based RPG featuring a story-branching system and turn-based combat. 
-Players progress by making meaningful choices that shape the storyline while facing enemies in strategic battles. T
-he game is managed by `GameManager.js`, which integrates all core modules such as Player, Enemy, Combat, UI, Story, and more.
+Players progress by making meaningful choices that shape the storyline while facing enemies in strategic battles. 
+The game is managed by `GameManager.js`, which integrates all core modules such as Player, Enemy, Combat, UI, Story, and more.
 
 ![Game Preview](./assets/images/background/preview.png)
 
@@ -36,6 +36,22 @@ he game is managed by `GameManager.js`, which integrates all core modules such a
 
 ## Author
 MvPorcalla
+
+---
+
+## 📚 Table of Contents
+- [Description](#description)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies](#technologies)
+- [Game Features](#game-features)
+- [Game Future Improvements](#game-future-improvements)
+- [File Descriptions](#file-descriptions)
+- [Game Startup Process](#game-startup-process)
+- [Summary](#summary)
+- [Further Support](#further-support)
+- [Contact](#contact)
+- [Contributions](#contributions)
 
 ---
 
@@ -138,11 +154,12 @@ Reincarnation_Diary
 
 # 📌 Further Support
 
-- Adding **inline comments and function headers** for better code readability
-- Creating **per-file detailed documentation** in Markdown
-- Optimizing or improving the **project folder structure** for scalability and maintainability
+If you'd like to improve or contribute to this project, here are some areas where support is welcome:
+- ✨ Adding **inline comments and function header**s to improve code readability
+- 📝 Creating detailed **per-file documentation in Markdown** for easier project understanding
+- 🗂️ Refining the **project folder structure** for better organization and scalability
 
-👉 Feel free to reach out or contribute to enhance the project further! 😊
+👉 Feel free to reach out, submit feedback, or contribute to make this project even better! 😊
 
 ---
 
@@ -151,11 +168,12 @@ Reincarnation_Diary
 - **Email:** digitalmelvs@gmail.com
 - **GitHub:** [MvPorcalla](https://github.com/MvPorcalla)
 
-For any issues or feedback, feel free to open a [GitHub Issue](https://github.com/yourusername/Reincarnation_Diary/issues).
+For any issues or feedback, feel free to open a [GitHub Issue](https://github.com/MvPorcalla/Reincarnation_Diary/issues).
 
 ---
 
 # 🤝 Contributions
 
 Contributions, suggestions, and improvements are always welcome!  
-Feel free to fork the project and open a pull request.
+Feel free to fork this project and submit a pull request.  
+All contributions are appreciated!
