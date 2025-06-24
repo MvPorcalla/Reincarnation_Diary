@@ -39,6 +39,7 @@ MvPorcalla
 
 ---
 
+<!-- 
 # 📂 Project Structure
 
 Reincarnation_Diary
@@ -67,6 +68,7 @@ Reincarnation_Diary
 ├── index.html                     # Game starting page
 ├── mainGame.html                  # Main game interface
 └── README.md                      # Project documentation
+-->
 
 ---
 
