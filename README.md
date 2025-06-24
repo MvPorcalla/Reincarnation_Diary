@@ -136,9 +136,26 @@ Reincarnation_Diary
 
 ---
 
-If you need help:
+📌 Further Support
+
 - Adding **inline comments and function headers** for better code readability
 - Creating **per-file detailed documentation** in Markdown
 - Optimizing or improving the **project folder structure** for scalability and maintainability
 
-👉 Just let me know and I can help you build that step by step too! 😊
+👉 Feel free to reach out or contribute to enhance the project further! 😊
+
+---
+
+## 📞 Contact
+
+- **Email:** digitalmelvs@gmail.com
+- **GitHub:** [MvPorcalla](https://github.com/MvPorcalla)
+
+For any issues or feedback, feel free to open a [GitHub Issue](https://github.com/yourusername/Reincarnation_Diary/issues).
+
+---
+
+## 🤝 Contributions
+
+Contributions, suggestions, and improvements are always welcome!  
+Feel free to fork the project and open a pull request.
