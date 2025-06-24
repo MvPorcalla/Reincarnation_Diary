@@ -5,12 +5,32 @@
 ![GitHub stars](https://img.shields.io/github/stars/MvPorcalla/Reincarnation_Diary)
 ![GitHub license](https://img.shields.io/github/license/MvPorcalla/Reincarnation_Diary)
 
+[![Donate](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20-blue)](https://www.buymeacoffee.com/yourusername)
+
 ## 📖 Description
 **Reincarnation Diary** is a text-based RPG featuring a **story-branching system** and **turn-based combat**.  
 Players make meaningful choices that shape the storyline while facing enemies in strategic battles.  
 The game is managed by `GameManager.js`, which integrates all core modules such as Player, Enemy, Combat, UI, Story, and more.
 
 ![Game Preview](./assets/images/background/preview.png)
+
+---
+
+## 📚 Table of Contents
+- [Description](#-description)
+- [Installation](#️-installation)
+- [Usage](#️-usage)
+- [Technologies](#-technologies)
+- [Game Features](#-game-features)
+- [Planned Future Improvements](#-planned-future-improvements)
+- [File Descriptions](#-file-descriptions)
+- [Game Startup Process](#-game-startup-process)
+- [Summary](#-summary)
+- [Contributing Guidelines](#-contributing-guidelines)
+- [Further Support](#-further-support)
+- [Contact](#-contact)
+- [Contributions](#-contributions)
+<!-- - [Support the Developer](#-support-the-developer) -->
 
 ---
 
@@ -52,23 +72,6 @@ The game is managed by `GameManager.js`, which integrates all core modules such 
 
 ## 👤 Author
 **MvPorcalla**
-
----
-
-## 📚 Table of Contents
-- [Description](#-description)
-- [Installation](#️-installation)
-- [Usage](#️-usage)
-- [Technologies](#-technologies)
-- [Game Features](#-game-features)
-- [Planned Future Improvements](#-planned-future-improvements)
-- [File Descriptions](#-file-descriptions)
-- [Game Startup Process](#-game-startup-process)
-- [Summary](#-summary)
-- [Contributing Guidelines](#-contributing-guidelines)
-- [Further Support](#-further-support)
-- [Contact](#-contact)
-- [Contributions](#-contributions)
 
 ---
 
@@ -213,3 +216,17 @@ For any issues or feedback, you can open a [GitHub Issue](https://github.com/MvP
 Contributions, suggestions, and improvements are always welcome!  
 Feel free to **fork this project and submit a pull request**.  
 All contributions are appreciated and will help this project grow! 🙌
+
+
+<!-- 
+## 💖 Support the Developer
+
+If you find this project helpful, enjoyable, or if you're using it in your own work, please consider supporting me!  
+Your contribution will help me continue improving this project and developing more open-source tools.
+
+### ☕ Ways to Support:
+- [Buy Me a Coffee](https://www.buymeacoffee.com/yourusername)  
+- [Donate via PayPal](https://www.paypal.me/yourusername)
+
+Every donation is greatly appreciated and will help me keep this project alive and growing. Thank you! 🙏
+-->
