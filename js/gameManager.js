@@ -70,7 +70,6 @@ function clearCombatState() {
 }
 
 // ============================= Rendering =============================
-
 function renderCombat(scene) {
   currentEnemy = scene.encounter;
   player.resetCombatHealth();
