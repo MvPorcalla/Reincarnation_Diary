@@ -58,6 +58,10 @@ export function validateStory(story) {
         if (choice.nextScene) {
           referencedScenes.add(choice.nextScene);
         }
+        
+        if (choice.redirectTo && typeof choice.redirectTo !== 'string') {
+          devWarn(`⚠️ Scene "${sceneName}" has an invalid redirectTo:`, choice.redirectTo);
+        }
       }
     }
   }

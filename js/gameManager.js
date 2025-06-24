@@ -12,6 +12,7 @@ import { devLog, devWarn, devError, isDev } from './debugger.js';
 // ============================= Debugging and Validation =============================
 if (isDev) {
   validateStory(story);
+  devLog('This is a debug log that only appears in development.');
 }
 
 // ============================= Game State =============================
