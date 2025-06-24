@@ -221,7 +221,7 @@ All contributions are appreciated and will help this project grow! 🙌
 
 
 <!-- 
-## 💖 Support the Developer
+# 💖 Support the Developer
 
 If you find this project helpful, enjoyable, or if you're using it in your own work, please consider supporting me!  
 Your contribution will help me continue improving this project and developing more open-source tools.
@@ -235,8 +235,23 @@ Every donation is greatly appreciated and will help me keep this project alive a
 
 ---
 
-## 📄 License
-This project is licensed under the **MIT License**.  
+# 📄 License
+This project is licensed under the **MIT License.**  
 You are free to use, modify, and distribute this project, provided that you give proper credit.
 
-See the [LICENSE](./LICENSE) file for more details.
+---
+
+### 📌 How to Credit
+If you use, modify, or reference this project, **please include the following attribution:**
+
+> Based on **"Reincarnation Diary" by MvPorcalla**  
+> Original GitHub Repository: [https://github.com/MvPorcalla/Reincarnation_Diary](https://github.com/MvPorcalla/Reincarnation_Diary)  
+> Licensed under the **MIT License.**
+
+✔️ **Proper credit helps support the developer and acknowledges the original creator.**
+
+> ⚠️ **Note:** Even modified or rebranded versions must retain proper attribution, as required by the MIT License.
+
+---
+
+See the full [LICENSE](./LICENSE) file for more details.
