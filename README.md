@@ -136,7 +136,7 @@ Reincarnation_Diary
 
 ---
 
-📌 Further Support
+# 📌 Further Support
 
 - Adding **inline comments and function headers** for better code readability
 - Creating **per-file detailed documentation** in Markdown
@@ -146,7 +146,7 @@ Reincarnation_Diary
 
 ---
 
-## 📞 Contact
+# 📞 Contact
 
 - **Email:** digitalmelvs@gmail.com
 - **GitHub:** [MvPorcalla](https://github.com/MvPorcalla)
@@ -155,7 +155,7 @@ For any issues or feedback, feel free to open a [GitHub Issue](https://github.co
 
 ---
 
-## 🤝 Contributions
+# 🤝 Contributions
 
 Contributions, suggestions, and improvements are always welcome!  
 Feel free to fork the project and open a pull request.
