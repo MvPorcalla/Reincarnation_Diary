@@ -137,8 +137,8 @@ Reincarnation_Diary
 ---
 
 If you need help:
-- Adding **inline comments and function headers** to your JavaScript files
-- Making a **per-file detailed markdown documentation**
-- Improving your project folder structure
+- Adding **inline comments and function headers** for better code readability
+- Creating **per-file detailed documentation** in Markdown
+- Optimizing or improving the **project folder structure** for scalability and maintainability
 
 👉 Just let me know and I can help you build that step by step too! 😊
