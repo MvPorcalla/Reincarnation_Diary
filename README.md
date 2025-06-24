@@ -3,6 +3,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/MvPorcalla/Reincarnation_Diary)
 ![GitHub forks](https://img.shields.io/github/forks/MvPorcalla/Reincarnation_Diary)
 ![GitHub stars](https://img.shields.io/github/stars/MvPorcalla/Reincarnation_Diary)
+![GitHub watchers](https://img.shields.io/github/watchers/MvPorcalla/Reincarnation_Diary?style=social)
 ![GitHub license](https://img.shields.io/github/license/MvPorcalla/Reincarnation_Diary)
 
 <!-- [![Donate](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95%20-blue)](https://www.buymeacoffee.com/yourusername) -->
