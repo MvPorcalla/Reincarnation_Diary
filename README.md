@@ -1,57 +1,74 @@
 # Reincarnation Diary
 
-## Description
-Reincarnation Diary is a text-based RPG featuring a story-branching system and turn-based combat. 
-Players progress by making meaningful choices that shape the storyline while facing enemies in strategic battles. 
+![GitHub issues](https://img.shields.io/github/issues/MvPorcalla/Reincarnation_Diary)
+![GitHub forks](https://img.shields.io/github/forks/MvPorcalla/Reincarnation_Diary)
+![GitHub stars](https://img.shields.io/github/stars/MvPorcalla/Reincarnation_Diary)
+![GitHub license](https://img.shields.io/github/license/MvPorcalla/Reincarnation_Diary)
+
+## 📖 Description
+**Reincarnation Diary** is a text-based RPG featuring a **story-branching system** and **turn-based combat**.  
+Players make meaningful choices that shape the storyline while facing enemies in strategic battles.  
 The game is managed by `GameManager.js`, which integrates all core modules such as Player, Enemy, Combat, UI, Story, and more.
 
 ![Game Preview](./assets/images/background/preview.png)
 
-## Installation
+---
+
+## 🛠️ Installation
 1. Download or clone this project to your local machine.
-2. Ensure all files are in the same project folder.
+2. Ensure all files remain in the same project folder.
 3. Open `index.html` in your web browser.
 
-## Usage
+---
+
+## ▶️ Usage
 - The game will automatically start when you open `index.html`.
-- Click the choice buttons to progress through the story.
-- When in combat, click the "Attack" button to fight the enemy.
+- Click the **choice buttons** to progress through the story.
+- During combat, click the **Attack** button to fight the enemy.
 - The game will handle scene transitions, battles, and player stats.
 
-## Technologies
+---
+
+## 💻 Technologies
 - HTML
 - CSS
 - JavaScript (ES6 Modules)
 
+---
 
-## Game Features
+## 🎮 Game Features
 - Story-branching system with multiple choices
-- Turn-based combat with enemy dodge and critical hits
+- Turn-based combat with enemy dodge and critical hit mechanics
 - Modular and expandable game structure
 
-## Game Future Improvements
-- Add save/load functionality
-- Add player inventory system
-- Add sound effects and music
+---
 
-## Author
-MvPorcalla
+## 🚀 Planned Future Improvements
+- Save/Load functionality
+- Player inventory system
+- Sound effects and background music
+
+---
+
+## 👤 Author
+**MvPorcalla**
 
 ---
 
 ## 📚 Table of Contents
-- [Description](#description)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technologies](#technologies)
-- [Game Features](#game-features)
-- [Game Future Improvements](#game-future-improvements)
-- [File Descriptions](#file-descriptions)
-- [Game Startup Process](#game-startup-process)
-- [Summary](#summary)
-- [Further Support](#further-support)
-- [Contact](#contact)
-- [Contributions](#contributions)
+- [Description](#-description)
+- [Installation](#️-installation)
+- [Usage](#️-usage)
+- [Technologies](#-technologies)
+- [Game Features](#-game-features)
+- [Planned Future Improvements](#-planned-future-improvements)
+- [File Descriptions](#-file-descriptions)
+- [Game Startup Process](#-game-startup-process)
+- [Summary](#-summary)
+- [Contributing Guidelines](#-contributing-guidelines)
+- [Further Support](#-further-support)
+- [Contact](#-contact)
+- [Contributions](#-contributions)
 
 ---
 
@@ -64,8 +81,8 @@ Reincarnation_Diary
 │   ├── data
 │   │   └── enemyData.json         # Enemy data in JSON format
 │   └── images                     # Game image assets
-│       ├── background             # background image
-│       └── enemies                # Enemy character image
+│       ├── background             # Background image
+│       └── enemies                # Enemy character images
 │
 ├── css
 │   └── uiStyle.css                # Game UI styles
@@ -86,13 +103,14 @@ Reincarnation_Diary
 └── README.md                      # Project documentation
 -->
 
+---
+
 # 📄 File Descriptions
 
-### `GameManager.js`
+### `gameManager.js`
 - Acts as the **main game controller**.
-- Starts the game.
-- Manages game state and scene transitions.
-- Handles combat logic and rendering of scenes and choices.
+- Starts the game, manages game state and scene transitions.
+- Handles combat logic and scene rendering.
 
 ### `story.js`
 - Contains the game’s story content.
@@ -103,8 +121,8 @@ Reincarnation_Diary
 - Displays the story, player stats, enemy visuals, and interactive choices.
 
 ### `combat.js`
-- Handles turn-based combat between the player and enemies.
-- Manages attack sequences, combat flow, and results.
+- Manages turn-based combat between the player and enemies.
+- Handles attack sequences and combat flow.
 
 ### `combatUtils.js`
 - Provides combat-related utility functions.
@@ -114,11 +132,11 @@ Reincarnation_Diary
   - Bonus damage
 
 ### `enemy.js`
-- Defines the **Enemy class** and methods for enemy combat interactions.
-- Handles:
+- Defines the **Enemy class** and enemy combat interactions.
+- Manages:
   - Enemy attacks
-  - Taking damage and dodge chance
-  - Loading enemy data from JSON
+  - Damage-taking and dodge chance
+  - Enemy data loading from JSON
   - Random enemy selection based on tier
 
 ### `player.js`
@@ -133,7 +151,6 @@ Reincarnation_Diary
 ---
 
 # 🚀 Game Startup Process
-
 1. When the game loads, `startGame()` is automatically called.
 2. The `goToScene('start')` function is triggered to load the starting scene.
 3. The game displays:
@@ -145,19 +162,38 @@ Reincarnation_Diary
 ---
 
 # ✅ Summary
+- The project is **modular**: each file has a specific role (player, combat, UI, story, debug).
+- The **gameManager.js** is the central hub of the system.
+- Easy to maintain and expand by adding new features like scenes, enemies, and player mechanics.
 
-- This game is **modular**: each file handles a specific part (player, combat, UI, story, debug).
-- The **GameManager.js** file is the heart of the project.
-- Easy to expand by adding new scenes, enemies, or player features later.
+---
+
+# 🤝 Contributing Guidelines
+
+Thank you for your interest in contributing! You can help by:
+- Suggesting new features
+- Fixing bugs
+- Improving or expanding the documentation
+- Adding new story branches or combat mechanics
+
+### 📢 How to Contribute
+1. Fork this repository.
+2. Create a new branch: `git checkout -b feature/YourFeature`
+3. Commit your changes: `git commit -m 'Add YourFeature'`
+4. Push to your branch: `git push origin feature/YourFeature`
+5. Submit a pull request.
+
+Please **open an issue or pull request** if you would like to contribute.  
+All contributions are welcome and appreciated!
 
 ---
 
 # 📌 Further Support
 
-If you'd like to improve or contribute to this project, here are some areas where support is welcome:
-- ✨ Adding **inline comments and function header**s to improve code readability
-- 📝 Creating detailed **per-file documentation in Markdown** for easier project understanding
-- 🗂️ Refining the **project folder structure** for better organization and scalability
+If you'd like to enhance or improve this project, here are some great areas to contribute:
+- ✨ Adding **inline comments and function headers** to improve code readability
+- 📝 Creating detailed **per-file documentation** in Markdown
+- 🗂️ Refining the **project folder structure** for better scalability and maintainability
 
 👉 Feel free to reach out, submit feedback, or contribute to make this project even better! 😊
 
@@ -168,12 +204,12 @@ If you'd like to improve or contribute to this project, here are some areas wher
 - **Email:** digitalmelvs@gmail.com
 - **GitHub:** [MvPorcalla](https://github.com/MvPorcalla)
 
-For any issues or feedback, feel free to open a [GitHub Issue](https://github.com/MvPorcalla/Reincarnation_Diary/issues).
+For any issues or feedback, you can open a [GitHub Issue](https://github.com/MvPorcalla/Reincarnation_Diary/issues).
 
 ---
 
-# 🤝 Contributions
+# 🚀 Contributions
 
 Contributions, suggestions, and improvements are always welcome!  
-Feel free to fork this project and submit a pull request.  
-All contributions are appreciated!
+Feel free to **fork this project and submit a pull request**.  
+All contributions are appreciated and will help this project grow! 🙌
