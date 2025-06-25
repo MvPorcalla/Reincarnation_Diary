@@ -1,0 +1,432 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png" />
+  <title>Reincarnator Diary: Memoir of the Soulbound</title>
+  <link rel="stylesheet" href="./css/uiStyle.css" />
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+  body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem 1rem;
+      text-align: center;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      z-index: 1; /* put content above background */
+    }
+
+
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('./assets/images/background/bg2.png'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    filter: brightness(0.5);
+    }
+
+    .game-title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 3.5rem;
+      color: #f5f5f5;
+      text-shadow: 2px 2px #000;
+      margin-bottom: 2rem;
+    }
+
+    .game-subtitle {
+      /* font-family: 'UnifrakturCook', cursive; */
+      font-size: 1.5rem;
+      color: #d0d0d0;
+      text-shadow: 1px 1px 5px #000, 0 0 25px #ff7f2a, 0 0 5px #ff7f2a;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.05em;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+
+    .start-button-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem; /* reduced from 2rem */
+      margin-bottom: 5rem; /* added to lift it up from the bottom */
+    }
+
+    .menu-button {
+        font-size: 1.2rem;
+        padding: 0.8rem 3rem;
+        background-color: transparent; /* Bright orange */
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+    }
+    .menu-button:hover { 
+        transform: scale(1.05);
+    }
+
+
+/* ================================================ FireFlies ================================================ */
+.fireflies {
+  pointer-events: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* Set higher/lower depending on layering needs */
+}
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #fff9b0; /* Single soft yellow color */
+  box-shadow: 0 0 10px 2px #d93600;
+  border-radius: 50%;
+  opacity: 0.9;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+}
+
+
+/* Unified float and glow animation */
+@keyframes float {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.85; }
+  25%  { transform: translate(12px, -8px) scale(1.4); opacity: 1; }
+  50%  { transform: translate(-10px, 10px) scale(0.9); opacity: 0.6; }
+  75%  { transform: translate(6px, 8px) scale(1.2); opacity: 0.8; }
+  100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+}
+
+@keyframes glow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 1; }
+}
+
+/* ================================================ FireFlies ================================================ */
+
+
+/* Modal styles */
+/* Modal Background */
+/* Modal Background */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.75);
+
+  /* Add flexbox properties for centering */
+  /* display: none; */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+/* Modal Content Box */
+
+
+/* Close (X) Button */
+.close-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  color: #aaa;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #ff7f2a;
+}
+
+/* Modal Content Box */
+.modal-content {
+  background-color: #1a1a1a; /* Darker, slightly desaturated background */
+  background-size: 20px 20px;
+  margin: 0; /* Remove margin as flexbox handles centering */
+  padding: 2.5rem; /* Slightly more padding */
+  border: 2px solid #5a4b3d; /* Thicker, earthy border */
+  border-radius: 8px; /* Softer corners */
+  width: 90%;
+  max-width: 550px; /* Slightly wider modal */
+  color: #f2f2f2;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 150, 50, 0.5), 0 0 50px rgba(255, 127, 42, 0.2); /* Enhanced glow */
+  overflow: hidden; /* To contain border effects */
+}
+
+/* Add a pseudo-element for an inner glow/border effect */
+.modal-content::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 1px solid rgba(255, 127, 42, 0.4); /* Inner, lighter orange border */
+  border-radius: 6px;
+  pointer-events: none; /* Allows clicks to pass through */
+}
+
+/* Modal Title */
+.modal-content h2 {
+  font-family: 'UnifrakturCook', cursive; /* Use your game title font */
+  font-size: 2.5rem; /* Larger title */
+  color: #fff9b0; /* Golden glow color */
+  text-shadow: 0 0 10px rgba(255, 249, 176, 0.7), 0 0 20px rgba(255, 127, 42, 0.5); /* Stronger glow */
+  margin-bottom: 1rem;
+}
+
+/* Modal Paragraph Text */
+.modal-content p {
+  font-family: 'Segoe UI', sans-serif; /* Keep consistent with body, or choose a legible fantasy font */
+  font-size: 1.1rem; /* Slightly larger text */
+  line-height: 1.6;
+  color: #e0e0e0;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px #000; /* Subtle text shadow for readability */
+}
+
+/* Close (X) Button */
+.close-btn {
+  top: 0.5rem;
+  right: 0.8rem;
+  font-size: 1.8rem; /* Larger close button */
+  color: #e0e0e0;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #ff7f2a;
+  transform: rotate(90deg); /* Little flair on hover */
+}
+
+/* Buttons Container */
+.modal-buttons {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column; /* Stack buttons vertically */
+  justify-content: center;
+  align-items: center; /* Center buttons horizontally */
+  gap: 1rem; /* Space between buttons */
+  width: 100%; /* Ensure container takes full width */
+}
+
+/* Individual Modal Buttons */
+.modal-btn {
+  background-color: #b35900; /* Darker, richer orange-brown */
+  color: #fff;
+  border: 2px solid #ff7f2a; /* Orange border */
+  padding: 0.9rem 2rem; /* More padding */
+  border-radius: 5px; /* Slightly less rounded */
+  font-size: 1.1rem; /* Slightly larger font */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 80%; /* Make buttons take up most of the width */
+  max-width: 300px; /* Limit max width for larger screens */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+  letter-spacing: 0.05em; /* A little breathing room */
+}
+
+.modal-btn:hover {
+  background-color: #ff7f2a; /* Brighter orange on hover */
+  border-color: #fff; /* White border on hover */
+  transform: translateY(-3px) scale(1.02); /* Lift and slightly enlarge */
+  box-shadow: 0 6px 12px rgba(255, 127, 42, 0.5); /* Enhanced hover shadow */
+}
+
+    
+  </style>
+</head>
+<body>
+
+  <div class="background"></div>
+  <!-- <div id="firefly-container" class="fireflies"></div> -->
+  <div>
+    <h1 class="game-title">Reincarnator Diary: Memoir of the Soulbound</h1>
+    <p class="game-subtitle">
+      Your soul remembers what the world forgets.
+    </p>
+  </div>
+
+  <div class="start-button-container">
+    <button id="startGameBtn" class="menu-button" onclick="showModal()">Start Game</button>
+  </div>
+
+  
+<div class="modal" id="gameModal">
+  <div class="modal-content">
+    <span class="close-btn" id="closeModal">&times;</span>
+    <h2 id="reincarnationCount">Your 1st Reincarnation</h2>
+    <p>Your soul remembers what the world forgets.</p>
+    <div class="modal-buttons">
+      <button class="modal-btn" id="beginNewLifeBtn" title="Start your journey from birth, shaping your earliest years and destiny.">Begin New Life</button>
+      <button class="modal-btn" id="forgeYourPathBtn" title="Skip to adulthood and dive directly into the main narrative with a pre-established character.">Forge Your Path</button>
+      <button class="modal-btn" id="howToPlay" title="Learn the mechanics and lore of the game.">How to Play</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('gameModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const startGameBtn = document.getElementById('startGameBtn'); // The button outside the modal
+
+  const beginNewLifeBtn = document.getElementById('beginNewLifeBtn');
+  const forgeYourPathBtn = document.getElementById('forgeYourPathBtn');
+
+  const howToPlayBtn = document.getElementById('howToPlay'); // How to Play button
+  
+  const reincarnationCountDisplay = document.getElementById('reincarnationCount'); // The h2 element
+
+  // --- Reincarnation Count Logic ---
+  let reincarnationCount = parseInt(localStorage.getItem('reincarnationCount')) || 0; // Get from storage, default to 0 if not found
+
+  // Function to update the displayed count in the modal
+  function updateReincarnationDisplay() {
+    let suffix = 'th';
+    const currentDisplayCount = reincarnationCount + 1; // The number being displayed
+
+    const lastDigit = currentDisplayCount % 10;
+    const secondLastDigit = Math.floor(currentDisplayCount / 10) % 10;
+
+    if (secondLastDigit === 1) {
+      suffix = 'th';
+    } else {
+      switch (lastDigit) {
+        case 1: suffix = 'st'; break;
+        case 2: suffix = 'nd'; break;
+        case 3: suffix = 'rd'; break;
+        default: suffix = 'th'; break;
+      }
+    }
+    reincarnationCountDisplay.textContent = `Your ${currentDisplayCount}${suffix} Reincarnation`;
+  }
+
+  // --- Modal Control Logic ---
+
+  // Show the modal
+  function showModal() {
+    updateReincarnationDisplay(); // Update count before showing
+    modal.style.display = 'flex'; // Set to 'flex' for centering
+  }
+
+  // Event listener for the initial "Start Game" button
+  startGameBtn.addEventListener('click', showModal);
+
+  // Event listener for the "X" close button
+  closeModalBtn.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // Event listener for clicking outside the modal
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+
+  // Function to handle game start or path selection clicks (increments count, saves, closes modal)
+  function handleGameStartSelection() {
+    reincarnationCount++; // Increment the count
+    localStorage.setItem('reincarnationCount', reincarnationCount); // Save to local storage ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    updateReincarnationDisplay(); // Update display immediately
+    modal.style.display = 'none'; // Close the modal
+  }
+
+  // Event listener for "Begin New Life" button
+  beginNewLifeBtn.addEventListener('click', () => {
+    handleGameStartSelection(); // Increment count and close modal
+    console.log(`Starting a new life (intro) for the ${reincarnationCount} time!`);
+    window.location.href = 'mainGame.html';
+  });
+
+  // Event listener for "Forge Your Path" button
+  forgeYourPathBtn.addEventListener('click', () => {
+    // handleGameStartSelection(); // Increment count and close modal
+    modal.style.display = 'none'; // Just close the modal
+    console.log(`Forging a path (adult main story) for the ${reincarnationCount} time!`);
+    // --- Add your logic to start the "adult main story" here ---
+    // Example: window.location.href = 'main-story-adult.html';
+  });
+
+  // Event listener for the "How to Play" button inside the modal
+  howToPlayBtn.addEventListener('click', () => {
+    // DO NOT call handleGameStartSelection() here if you don't want it to count
+    modal.style.display = 'none'; // Just close the modal
+    console.log('Showing how to play instructions...');
+    // --- Add your "How to Play" logic here ---
+    // Example: window.location.href = 'how-to-play.html';
+  });
+
+
+  // --- Firefly animation setup (keep existing code) ---
+ // Create the container dynamically
+  const container = document.createElement('div');
+  container.className = 'fireflies';
+  document.body.appendChild(container);
+
+  const quantity = window.innerWidth < 600 ? 12 : 16;
+
+  for (let i = 0; i < quantity; i++) {
+    const firefly = document.createElement('div');
+    firefly.className = 'firefly';
+
+    const size = Math.random() * 3 + 3; // 3–6px
+    const top = Math.random() * 90 + 5;
+    const left = Math.random() * 90 + 5;
+    const float = 'float';
+    const floatDur = (Math.random() * 6 + 8).toFixed(2); // 8–14s
+    const glowDur = (Math.random() * 3 + 4).toFixed(2);  // 4–7s
+
+    firefly.style.width = `${size}px`;
+    firefly.style.height = `${size}px`;
+    firefly.style.top = `${top}%`;
+    firefly.style.left = `${left}%`;
+    firefly.style.animation = `
+      ${float} ${floatDur}s ease-in-out 0s infinite,
+      glow ${glowDur}s ease-in-out 0s infinite
+    `;
+
+    container.appendChild(firefly);
+  }
+
+  // Pause animation when tab is not visible
+  document.addEventListener("visibilitychange", () => {
+    const fireflies = document.querySelectorAll('.firefly');
+    fireflies.forEach(f => {
+      f.style.animationPlayState = document.hidden ? 'paused' : 'running';
+    });
+  });
+</script>
+</body>
+</html>

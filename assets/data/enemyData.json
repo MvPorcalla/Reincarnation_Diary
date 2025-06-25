@@ -1,0 +1,56 @@
+{
+  "1": [
+    {
+      "name": "Goblin",
+      "maxHealth": 60,
+      "damage": 9,
+      "critChance": 0.1,
+      "tier": 1,
+      "agi": 8,
+      "imageSrc": "./assets/images/enemies/goblin-girl.png",
+      "defeatMessage": "The Goblin screeches and scurries away into the shadows..."
+    },
+    {
+      "name": "Slime",
+      "maxHealth": 50,
+      "damage": 5,
+      "critChance": 0.05,
+      "tier": 1,
+      "agi": 5,
+      "imageSrc": "./assets/images/enemies/slime-girl.png",
+      "defeatMessage": "The Slime jiggles violently before melting into the ground..."
+    },
+    {
+      "name": "Wild Bat",
+      "maxHealth": 50,
+      "damage": 6,
+      "critChance": 0.05,
+      "tier": 1,
+      "agi": 10,
+      "imageSrc": "./assets/images/sampleasset.png",
+      "defeatMessage": "The Wild Bat screeches one last time before falling from the sky..."
+    }
+  ],
+  "2": [
+    {
+      "name": "Orc",
+      "maxHealth": 110,
+      "damage": 20,
+      "critChance": 0.15,
+      "tier": 2,
+      "agi": 7,
+      "imageSrc": "./assets/images/enemies/orc-girl.png",
+      "defeatMessage": "The Orc drops her weapon with a grunt and collapses in defeat..."
+    },
+    {
+      "name": "Skeleton",
+      "maxHealth": 90,
+      "damage": 20,
+      "critChance": 0.12,
+      "tier": 2,
+      "agi": 6,
+      "imageSrc": "./assets/images/sampleasset.png",
+      "defeatMessage": "The Skeleton crumbles into a pile of brittle bones..."
+    }
+  ]
+}

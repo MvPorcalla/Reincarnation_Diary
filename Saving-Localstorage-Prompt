@@ -1,0 +1,21 @@
+Can you help me design a LocalStorage-based account system for my text-based game (similar to Life in Adventure)?
+The game does not need mid-game save/load, but I want to:
+
+Track persistent player account progress across multiple runs:
+✅ Achievements
+✅ Total points
+✅ Player level
+✅ Unlocked classes
+✅ Best character records
+Automatically save progress at the end of each story.
+Provide export/import functionality to protect against browser data loss.
+Ensure this system will also work when I convert the game to an Electron standalone app.
+
+📌 Please provide:
+Recommended LocalStorage structure for scalable account data.
+A modular file setup (preferably using saveManager.js).
+Example save, load, export, and import functions.
+Best practices for account-based progression using LocalStorage.
+
+
+ChatGPT Prompt for making a Localstorage saving manager
