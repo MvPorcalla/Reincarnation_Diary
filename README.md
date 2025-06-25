@@ -254,9 +254,7 @@ You are free to use, modify, and distribute this project, provided that you give
 ### 📌 How to Credit
 If you use, modify, or reference this project, **please include the following attribution:**
 
-> Based on **"Reincarnation Diary" by MvPorcalla**  
-> Original GitHub Repository: [https://github.com/MvPorcalla/Reincarnation_Diary](https://github.com/MvPorcalla/Reincarnation_Diary)  
-> Licensed under the **MIT License.**
+> Copyright (c) 2024 MvPorcalla
 
 ✔️ **Proper credit helps support the developer and acknowledges the original creator.**
 
